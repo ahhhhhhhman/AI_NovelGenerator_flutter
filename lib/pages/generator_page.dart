@@ -7,7 +7,7 @@ class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(PoLocalizations.of(context).tr('generator_page_content')),
+      child: Text(PoLocalizations.of(context).tr('novel_structure_tab')),
     );
   }
 }

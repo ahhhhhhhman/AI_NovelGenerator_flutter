@@ -1,0 +1,42 @@
+msgid "app_title"
+msgstr ""
+
+msgid "chapter_blueprint_content"
+msgstr ""
+
+msgid "chapter_blueprint_tab"
+msgstr ""
+
+msgid "chapter_management_tab"
+msgstr ""
+
+msgid "character_status_content"
+msgstr ""
+
+msgid "character_status_tab"
+msgstr ""
+
+msgid "full_text_overview_content"
+msgstr ""
+
+msgid "full_text_overview_tab"
+msgstr ""
+
+msgid "main_features_content"
+msgstr ""
+
+msgid "main_features_tab"
+msgstr ""
+
+msgid "novel_structure_content"
+msgstr ""
+
+msgid "novel_structure_tab"
+msgstr ""
+
+msgid "other_settings_content"
+msgstr ""
+
+msgid "other_settings_tab"
+msgstr ""
+

@@ -1,96 +1,95 @@
+// 修正这里！使用 'package:' 而不是相对路径
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter/foundation.dart' show SynchronousFuture;
 
 class PoLocalizations {
   PoLocalizations(this.locale);
-  
+
   final Locale locale;
-  Map<String, String> _localizedStrings = {};
-  
+  late Map<String, String> _localizedStrings;
+
   static PoLocalizations of(BuildContext context) {
-    return Localizations.of<PoLocalizations>(context, PoLocalizations) ?? PoLocalizations(const Locale('en'));
+    return Localizations.of<PoLocalizations>(context, PoLocalizations)!;
   }
-  
+
   Future<bool> load() async {
+    String assetPath =
+        'lib/po/translations/${locale.languageCode}/LC_MESSAGES/messages.po';
+
     try {
-      // 尝试从assets加载.po文件
-      String poContent = await rootBundle.loadString('lib/po/app_${locale.languageCode}.po');
+      print('正在加载翻译文件: $assetPath');
+      String poContent = await rootBundle.loadString(assetPath);
       _localizedStrings = _parsePoFile(poContent);
-      // 添加调试信息
-      print('Loaded ${_localizedStrings.length} translations for ${locale.languageCode}');
+      print('成功为 ${locale.languageCode} 加载了 ${_localizedStrings.length} 条翻译。');
       return true;
     } catch (e) {
-      // 如果加载失败，使用空映射
-      print('Failed to load translations for ${locale.languageCode}: $e');
+      print('错误：为 ${locale.languageCode} 加载翻译失败，路径: $assetPath. $e');
       _localizedStrings = {};
       return false;
     }
   }
-  
-  // 解析.po文件内容
+
   Map<String, String> _parsePoFile(String content) {
-    Map<String, String> translations = {};
-    List<String> lines = content.split('\n');
-    
-    String? currentMsgId;
-    String? currentMsgStr;
-    bool inMsgId = false;
-    bool inMsgStr = false;
-    
-    for (String line in lines) {
-      line = line.trim();
-      
-      // 跳过空行和注释
-      if (line.isEmpty || line.startsWith('#')) {
-        continue;
-      }
-      
-      if (line.startsWith('msgid ')) {
-        inMsgId = true;
-        inMsgStr = false;
-        // 提取msgid的值（去除引号）
-        currentMsgId = line.substring(6).replaceAll('"', '');
-      } else if (line.startsWith('msgstr ')) {
-        inMsgId = false;
-        inMsgStr = true;
-        // 提取msgstr的值（去除引号）
-        currentMsgStr = line.substring(7).replaceAll('"', '');
-      } else if (line.startsWith('"') && line.endsWith('"')) {
-        // 处理多行字符串
-        String value = line.substring(1, line.length - 1);
-        if (inMsgId && currentMsgId != null) {
-          currentMsgId += value;
-        } else if (inMsgStr && currentMsgStr != null) {
-          currentMsgStr += value;
+    final Map<String, String> translations = {};
+
+    final entries = content.split(RegExp(r'\n\s*\n'));
+
+    for (final entry in entries) {
+      final lines = entry.split('\n');
+      String? msgid;
+      String msgstr = '';
+      bool inMsgId = false;
+      bool inMsgStr = false;
+
+      for (final line in lines) {
+        final trimmedLine = line.trim();
+        if (trimmedLine.isEmpty || trimmedLine.startsWith('#')) {
+          continue;
+        }
+
+        if (trimmedLine.startsWith('msgid ')) {
+          inMsgId = true;
+          inMsgStr = false;
+          msgid = _unquote(trimmedLine.substring(6));
+        } else if (trimmedLine.startsWith('msgstr ')) {
+          inMsgId = false;
+          inMsgStr = true;
+          msgstr = _unquote(trimmedLine.substring(7));
+        } else if (trimmedLine.startsWith('"')) {
+          if (inMsgId) {
+            msgid = (msgid ?? '') + _unquote(trimmedLine);
+          } else if (inMsgStr) {
+            msgstr += _unquote(trimmedLine);
+          }
         }
       }
-      
-      // 如果我们有完整的msgid和msgstr，就添加到翻译映射中
-      if (currentMsgId != null && currentMsgStr != null && 
-          !inMsgId && !inMsgStr && 
-          currentMsgId.isNotEmpty) {
-        translations[currentMsgId] = currentMsgStr;
-        // 添加调试信息
-        print('Added translation: $currentMsgId -> $currentMsgStr');
-        currentMsgId = null;
-        currentMsgStr = null;
+
+      if (msgid != null && msgid.isNotEmpty) {
+        translations[msgid] = msgstr;
       }
     }
-    
+
     return translations;
   }
-  
-  String tr(String key) {
-    String value = _localizedStrings[key] ?? key;
-    // 添加调试信息
-    if (value == key) {
-      print('Translation not found for key: $key');
+
+  String _unquote(String str) {
+    if (str.startsWith('"') && str.endsWith('"')) {
+      return str.substring(1, str.length - 1);
     }
-    return value;
+    return str;
   }
-  
-  static const LocalizationsDelegate<PoLocalizations> delegate = _PoLocalizationsDelegate();
+
+  String tr(String key) {
+    final translation = _localizedStrings[key];
+    if (translation == null) {
+      print('翻译未找到：key: "$key", 语言: "${locale.languageCode}".');
+      return key;
+    }
+    return translation;
+  }
+
+  static const LocalizationsDelegate<PoLocalizations> delegate =
+      _PoLocalizationsDelegate();
 }
 
 class _PoLocalizationsDelegate extends LocalizationsDelegate<PoLocalizations> {
@@ -98,19 +97,16 @@ class _PoLocalizationsDelegate extends LocalizationsDelegate<PoLocalizations> {
 
   @override
   bool isSupported(Locale locale) {
-    // 支持英语和中文
-    bool supported = ['en', 'zh'].contains(locale.languageCode);
-    print('Locale ${locale.languageCode} supported: $supported');
-    return supported;
+    return ['en', 'zh'].contains(locale.languageCode);
   }
 
   @override
   Future<PoLocalizations> load(Locale locale) async {
-    print('Loading translations for locale: ${locale.languageCode}');
+    print('开始为语言环境加载翻译: ${locale.languageCode}');
     PoLocalizations localizations = PoLocalizations(locale);
     await localizations.load();
-    print('Loaded translations for locale: ${locale.languageCode}');
-    return SynchronousFuture<PoLocalizations>(localizations);
+    print('完成为语言环境加载翻译: ${locale.languageCode}');
+    return localizations;
   }
 
   @override
