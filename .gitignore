@@ -45,8 +45,8 @@ app.*.map.json
 /android/app/release
 
 # Configuration files
-config.json
+# assets/config/config.json
 
 # Log files
 /logs/
-assets/config/config.json
+
