@@ -28,19 +28,24 @@
 
 ```
 lib/
-├── main.dart                 # 应用入口文件
-├── pages/                    # 页面组件
-│   ├── home_page.dart        # 主页
-│   ├── generator_page.dart   # 生成器页面
-│   ├── favorites_page.dart   # 收藏页面
-│   ├── settings_page.dart    # 设置页面
-│   ├── profile_page.dart     # 个人资料页面
-│   ├── search_page.dart      # 搜索页面
-│   └── other_settings_page.dart # 其他设置页面
-├── po/                       # 国际化相关文件
-│   ├── po_localizations.dart # 本地化实现
-│   └── translations/         # 翻译文件
-└── assets/                   # 静态资源文件
+├── main.dart                      # 应用入口文件
+├── app/                           # 应用配置
+│   ├── app.dart                   # 根组件
+│   ├── routes.dart                # 路由管理
+│   └── localizations/             # 国际化支持
+├── data/                          # 数据层
+│   ├── models/                    # 数据模型
+│   ├── repositories/              # 数据仓库
+│   └── datasources/               # 数据源
+├── domain/                        # 业务层
+│   ├── usecases/                  # 用例
+│   └── services/                  # 业务服务
+├── presentation/                  # UI层
+│   ├── pages/                     # 页面
+│   ├── widgets/                   # 通用组件
+│   └── theme/                     # 主题配置
+├── utils/                         # 工具类
+└── assets/                        # 静态资源文件
 ```
 
 ## 安装与运行
@@ -83,17 +88,20 @@ flutter run -d android
 ## 使用说明
 
 1. **导航栏操作**：
-   - 点击左侧导航栏图标可切换不同功能模块
-   - 点击底部箭头按钮可收缩/展开导航栏
+   - 点击左上角菜单图标可打开导航栏
+   - 在导航栏中选择不同的功能模块
+   - 当前支持7个主要功能模块：
+     - **主要功能**：应用的核心功能入口
+     - **小说架构**：构建小说的整体结构
+     - **章节蓝图**：设计具体章节的内容蓝图
+     - **角色状态**：管理小说中的角色信息
+     - **全文概述**：查看小说的完整内容概览
+     - **章节管理**：管理各个章节的内容
+     - **其他设置**：应用的其他配置选项
 
-2. **主要功能模块**：
-   - **主要功能**：应用的核心功能入口
-   - **小说架构**：构建小说的整体结构
-   - **章节蓝图**：设计具体章节的内容蓝图
-   - **角色状态**：管理小说中的角色信息
-   - **全文概述**：查看小说的完整内容概览
-   - **章节管理**：管理各个章节的内容
-   - **其他设置**：应用的其他配置选项
+2. **页面切换**：
+   - 应用会根据导航栏的选择自动切换到对应页面
+   - 页面标题会动态更新以反映当前所在的功能模块
 
 ## 国际化支持
 
@@ -107,16 +115,16 @@ flutter run -d android
 
 ### 添加新页面
 
-1. 在 `lib/pages/` 目录下创建新的页面文件
-2. 在 `lib/main.dart` 中导入新页面
-3. 在 `_MyHomePageState` 的 `build` 方法中添加页面切换逻辑
-4. 在导航栏中添加对应的 `NavigationRailDestination`
+1. 在 `lib/presentation/pages/` 目录下创建新的页面文件
+2. 在 `lib/app/routes.dart` 中添加路由配置
+3. 在 `lib/presentation/widgets/navigation_drawer.dart` 中添加导航项
+4. 在 `lib/presentation/pages/home_page.dart` 中添加页面引用和标题
 
 ### 添加新翻译
 
-1. 修改 `lib/po/translations/zh/LC_MESSAGES/messages.po` 文件添加中文翻译
-2. 如果需要支持其他语言，创建对应语言的.po文件
-3. 运行翻译生成命令更新本地化文件
+1. 修改 `assets/i18n/zh.json` 文件添加中文翻译
+2. 修改 `assets/i18n/en.json` 文件添加英文翻译
+3. 在需要使用的地方通过 `AppLocalizations.of(context).translate('key')` 调用
 
 ## 贡献
 

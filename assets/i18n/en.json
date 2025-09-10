@@ -1,0 +1,20 @@
+{
+  "app_title": "Novel Generator",
+  "home_title": "Home",
+  "settings_title": "Settings",
+  "novel_editor_title": "Novel Editor",
+  "character_library_title": "Character Library",
+  "log_title": "Logs",
+  "loading": "Loading...",
+  "step_buttons": "Step {step}",
+  "text_editor_hint": "Enter text here...",
+  "api_key_label": "API Key",
+  "model_parameters_label": "Model Parameters",
+  "nav_main_features": "Main Features",
+  "nav_novel_architecture": "Novel Architecture",
+  "nav_chapter_blueprint": "Chapter Blueprint",
+  "nav_character_status": "Character Status",
+  "nav_full_text_overview": "Full Text Overview",
+  "nav_chapter_management": "Chapter Management",
+  "nav_other_settings": "Other Settings"
+}

@@ -1,0 +1,13 @@
+{
+  "app_name": "Novel Generator",
+  "version": "1.0.0",
+  "default_settings": {
+    "theme": "Fantasy",
+    "genre": "Adventure",
+    "chapter_count": 10
+  },
+  "api_config": {
+    "default_model": "llm-default",
+    "timeout_seconds": 30
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "app_title": "小说生成器",
+  "home_title": "主页",
+  "settings_title": "设置",
+  "novel_editor_title": "小说编辑器",
+  "character_library_title": "角色库",
+  "log_title": "日志",
+  "loading": "加载中...",
+  "step_buttons": "步骤 {step}",
+  "text_editor_hint": "在此输入文本...",
+  "api_key_label": "API密钥",
+  "model_parameters_label": "模型参数",
+  "nav_main_features": "主要功能",
+  "nav_novel_architecture": "小说架构",
+  "nav_chapter_blueprint": "章节蓝图",
+  "nav_character_status": "角色状态",
+  "nav_full_text_overview": "全文概述",
+  "nav_chapter_management": "章节管理",
+  "nav_other_settings": "其他设置"
+}
