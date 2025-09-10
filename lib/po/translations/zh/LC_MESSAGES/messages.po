@@ -7,59 +7,124 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-09-09 20:29+0800\n"
-"PO-Revision-Date: 2025-09-09 20:30+0800\n"
+"POT-Creation-Date: 2025-09-10 08:45+0800\n"
+"PO-Revision-Date: 2025-09-10 10:00+0800\n"
 "Last-Translator: \n"
-"Language-Team: zh <LL@li.org>\n"
 "Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
-"X-Generator: Poedit 3.7\n"
 
-msgid "app_title"
-msgstr "应用名"
+msgid "chapter_blueprint_description"
+msgstr "章节蓝图的详细说明"
 
-msgid "chapter_blueprint_content"
-msgstr "章节蓝图内容"
+msgid "chapter_blueprint_info_description"
+msgstr "章节蓝图信息的描述"
+
+msgid "chapter_blueprint_info_title"
+msgstr "章节蓝图信息标题"
 
 msgid "chapter_blueprint_tab"
 msgstr "章节蓝图"
 
-msgid "chapter_management_tab"
-msgstr "章节管理 "
+msgid "chapter_blueprint_title"
+msgstr "章节蓝图标题"
 
-msgid "character_status_content"
-msgstr "角色状态内容"
+msgid "chapter_management_description"
+msgstr "章节管理的详细说明"
+
+msgid "chapter_management_info_description"
+msgstr "章节管理信息的描述"
+
+msgid "chapter_management_info_title"
+msgstr "章节管理信息标题"
+
+msgid "chapter_management_tab"
+msgstr "章节管理"
+
+msgid "chapter_management_title"
+msgstr "章节管理标题"
+
+msgid "character_status_description"
+msgstr "角色状态的详细说明"
+
+msgid "character_status_info_description"
+msgstr "角色状态信息的描述"
+
+msgid "character_status_info_title"
+msgstr "角色状态信息标题"
 
 msgid "character_status_tab"
 msgstr "角色状态"
 
-msgid "full_text_overview_content"
-msgstr "全文概述内容"
+msgid "character_status_title"
+msgstr "角色状态标题"
+
+msgid "full_text_overview_description"
+msgstr "全文概述的详细说明"
+
+msgid "full_text_overview_info_description"
+msgstr "全文概述信息的描述"
+
+msgid "full_text_overview_info_title"
+msgstr "全文概述信息标题"
 
 msgid "full_text_overview_tab"
 msgstr "全文概述"
 
-msgid "main_features_content"
-msgstr "主要功能内容"
+msgid "full_text_overview_title"
+msgstr "全文概述标题"
+
+msgid "main_features_description"
+msgstr "主要功能的详细说明"
 
 msgid "main_features_tab"
 msgstr "主要功能"
 
-msgid "novel_structure_content"
-msgstr "小说架构内容"
+msgid "main_features_title"
+msgstr "主要功能标题"
+
+msgid "main_features_welcome_description"
+msgstr "欢迎页主要功能说明"
+
+msgid "main_features_welcome_title"
+msgstr "欢迎页主要功能标题"
+
+msgid "novel_structure_description"
+msgstr "小说架构的详细说明"
+
+msgid "novel_structure_info_description"
+msgstr "小说架构信息的描述"
+
+msgid "novel_structure_info_title"
+msgstr "小说架构信息标题"
 
 msgid "novel_structure_tab"
 msgstr "小说架构"
 
-msgid "other_settings_content"
-msgstr "其他设置内容"
+msgid "novel_structure_title"
+msgstr "小说架构标题"
+
+msgid "other_settings_description"
+msgstr "其他设置的详细说明"
+
+msgid "other_settings_info_description"
+msgstr "其他设置信息的描述"
+
+msgid "other_settings_info_title"
+msgstr "其他设置信息标题"
 
 msgid "other_settings_tab"
 msgstr "其他设置"
 
+msgid "other_settings_title"
+msgstr "其他设置标题"
+
 #~ msgid "generator_page_content"
 #~ msgstr "小说架构文本"
+
+#~ msgid "app_title"
+#~ msgstr "应用名"

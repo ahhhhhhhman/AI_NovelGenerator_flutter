@@ -12,23 +12,23 @@ import 'pages/search_page.dart';
 import 'pages/other_settings_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const AiNovelGeneratorApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class AiNovelGeneratorApp extends StatelessWidget {
+  const AiNovelGeneratorApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
+      create: (context) => AiNovelGeneratorAppState(),
       child: MaterialApp(
-        title: 'AI Novel Generator',
+        title: 'AI小说生成器',
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.limeAccent),
         ),
-        home: MyHomePage(),
+        home: AiNovelHomePage(),
         localizationsDelegates: const [
           PoLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -40,7 +40,6 @@ class MyApp extends StatelessWidget {
           Locale('zh'), // 中文
         ],
         localeResolutionCallback: (locale, supportedLocales) {
-          // 默认使用英语
           for (var supportedLocale in supportedLocales) {
             if (supportedLocale.languageCode == locale?.languageCode) {
               return supportedLocale;
@@ -53,9 +52,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// ...
-
-class MyAppState extends ChangeNotifier {
+class AiNovelGeneratorAppState extends ChangeNotifier {
   var current = WordPair.random();
 
   void getNext() {
@@ -63,7 +60,6 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ↓ Add the code below.
   var favorites = <WordPair>[];
 
   void toggleFavorite() {
@@ -76,16 +72,14 @@ class MyAppState extends ChangeNotifier {
   }
 }
 
-// ...
+class AiNovelHomePage extends StatefulWidget {
+  const AiNovelHomePage({super.key});
 
-// ...
-
-class MyHomePage extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<AiNovelHomePage> createState() => _AiNovelHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _AiNovelHomePageState extends State<AiNovelHomePage> {
   var selectedIndex = 0;
   var isNavigationRailExtended = true;
 
@@ -119,7 +113,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     return LayoutBuilder(
       builder: (context, constraints) {
-        // 安全地获取本地化实例
         final localizations = PoLocalizations.of(context);
         return Scaffold(
           body: Row(
