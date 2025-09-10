@@ -1,6 +1,7 @@
 // 修正这里！使用 'package:' 而不是相对路径
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import '../domain/services/log_service.dart';
 
 class PoLocalizations {
   PoLocalizations(this.locale);
@@ -17,13 +18,13 @@ class PoLocalizations {
         'lib/po/translations/${locale.languageCode}/LC_MESSAGES/messages.po';
 
     try {
-      print('正在加载翻译文件: $assetPath');
+      LogService().logInfo('正在加载翻译文件: $assetPath');
       String poContent = await rootBundle.loadString(assetPath);
       _localizedStrings = _parsePoFile(poContent);
-      print('成功为 ${locale.languageCode} 加载了 ${_localizedStrings.length} 条翻译。');
+      LogService().logInfo('成功为 ${locale.languageCode} 加载了 ${_localizedStrings.length} 条翻译。');
       return true;
     } catch (e) {
-      print('错误：为 ${locale.languageCode} 加载翻译失败，路径: $assetPath. $e');
+      LogService().logError('错误：为 ${locale.languageCode} 加载翻译失败，路径: $assetPath. $e');
       _localizedStrings = {};
       return false;
     }
@@ -82,7 +83,7 @@ class PoLocalizations {
   String tr(String key) {
     final translation = _localizedStrings[key];
     if (translation == null) {
-      print('翻译未找到：key: "$key", 语言: "${locale.languageCode}".');
+      LogService().logWarning('翻译未找到：key: "$key", 语言: "${locale.languageCode}".');
       return key;
     }
     return translation;
@@ -102,10 +103,10 @@ class _PoLocalizationsDelegate extends LocalizationsDelegate<PoLocalizations> {
 
   @override
   Future<PoLocalizations> load(Locale locale) async {
-    print('开始为语言环境加载翻译: ${locale.languageCode}');
+    LogService().logInfo('开始为语言环境加载翻译: ${locale.languageCode}');
     PoLocalizations localizations = PoLocalizations(locale);
     await localizations.load();
-    print('完成为语言环境加载翻译: ${locale.languageCode}');
+    LogService().logInfo('完成为语言环境加载翻译: ${locale.languageCode}');
     return localizations;
   }
 

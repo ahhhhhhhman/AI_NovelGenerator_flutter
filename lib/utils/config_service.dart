@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import '../domain/services/log_service.dart';
 
 class ConfigService {
   static final ConfigService _instance = ConfigService._internal();
@@ -22,19 +23,19 @@ class ConfigService {
       // 检查config.json是否存在
       if (!await configFile.exists()) {
         // 从assets中读取config.example.json
-        final exampleConfig = await rootBundle.loadString('config.example.json');
+        final exampleConfig = await rootBundle.loadString('assets/config/config.example.json');
         
         // 写入到应用文档目录
         await configFile.writeAsString(exampleConfig);
-        print('Created config.json from config.example.json');
+        LogService().logInfo('Created config.json from config.example.json');
       }
 
       // 读取配置文件
       final configString = await configFile.readAsString();
       _config = json.decode(configString);
-      print('Configuration loaded successfully');
+      LogService().logInfo('Configuration loaded successfully');
     } catch (e) {
-      print('Error initializing configuration: $e');
+      LogService().logError('Error initializing configuration: $e');
       // 使用默认配置
       _config = {
           "last_interface_format": "OpenAI",
@@ -166,9 +167,9 @@ class ConfigService {
       
       final configString = json.encode(_config);
       await configFile.writeAsString(configString);
-      print('Configuration saved successfully');
+      LogService().logInfo('Configuration saved successfully');
     } catch (e) {
-      print('Error saving configuration: $e');
+      LogService().logError('Error saving configuration: $e');
     }
   }
 }
