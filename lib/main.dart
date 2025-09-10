@@ -87,6 +87,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
+  var isNavigationRailExtended = true;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +126,8 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               SafeArea(
                 child: NavigationRail(
-                  extended: constraints.maxWidth >= 600,
+                  extended:
+                      isNavigationRailExtended && constraints.maxWidth >= 600,
                   destinations: [
                     NavigationRailDestination(
                       icon: Icon(Icons.home),
@@ -162,6 +164,28 @@ class _MyHomePageState extends State<MyHomePage> {
                       selectedIndex = value;
                     });
                   },
+                  trailing: Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              isNavigationRailExtended =
+                                  !isNavigationRailExtended;
+                            });
+                          },
+                          icon: Icon(
+                            isNavigationRailExtended
+                                ? Icons.arrow_back_ios
+                                : Icons.arrow_forward_ios,
+                          ),
+                          tooltip: isNavigationRailExtended ? '收起导航栏' : '展开导航栏',
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               Expanded(
