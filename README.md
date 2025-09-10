@@ -133,17 +133,3 @@ flutter run -d android
 ## 许可证
 
 本项目采用GNU Affero General Public License v3.0 (AGPL-3.0)许可证。
-
-### 商业使用声明
-
-本项目仅供个人学习和非商业用途使用。如需将本项目用于商业用途，必须获得版权所有者的明确授权并支付相应费用。
-
-详细信息请参阅：
-- [LICENSE](LICENSE) - AGPL-3.0许可证全文
-- [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md) - 商业许可证说明
-
-### 联系方式
-
-如需获得商业许可证或有任何疑问，请联系：
-
-Email: your-email@example.com
