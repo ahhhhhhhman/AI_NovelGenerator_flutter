@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'po/po_localizations.dart';
-import 'pages/home_page.dart';
-import 'pages/generator_page.dart';
-import 'pages/favorites_page.dart';
-import 'pages/settings_page.dart';
-import 'pages/profile_page.dart';
-import 'pages/search_page.dart';
-import 'pages/other_settings_page.dart';
+import 'pages/main_features.dart';
+import 'pages/novel_structure.dart';
+import 'pages/chapter_blueprint.dart';
+import 'pages/character_status.dart';
+import 'pages/full_text_overview.dart';
+import 'pages/chapter_management.dart';
+import 'pages/other_settings.dart';
 
 void main() {
   runApp(const AiNovelGeneratorApp());
