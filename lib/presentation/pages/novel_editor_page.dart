@@ -9,8 +9,10 @@ class NovelEditorPage extends StatelessWidget {
     final localizations = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(localizations.translate('novel_editor_title'))),
-      body: const Center(
-        child: Text('Novel Editor Page - Edit chapter content'),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Text('Novel Editor Page - Edit chapter content'),
+        ),
       ),
     );
   }

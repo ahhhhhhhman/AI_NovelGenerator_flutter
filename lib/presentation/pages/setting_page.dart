@@ -9,8 +9,10 @@ class SettingPage extends StatelessWidget {
     final localizations = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(localizations.translate('settings_title'))),
-      body: const Center(
-        child: Text('Settings Page - Configure API keys and model parameters'),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Text('Settings Page - Configure API keys and model parameters'),
+        ),
       ),
     );
   }
