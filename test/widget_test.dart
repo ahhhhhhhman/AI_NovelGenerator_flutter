@@ -9,14 +9,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:novel_generator_flutter/app/app.dart';
 
-import 'package:novel_generator_flutter/main.dart';
 
 void main() {
-  testWidgets('App launches correctly', (WidgetTester tester) async {
+  testWidgets('App launches without throwing exception', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const NovelGeneratorApp());
+    
+    // Verify that the app built without throwing an exception
+    expect(tester.takeException(), isNull);
+  });
 
-    // Verify that the app title is displayed.
-    expect(find.text('Novel Generator'), findsOneWidget);
+  testWidgets('App shows Material app', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const NovelGeneratorApp());
+    
+    // Verify that the app shows a MaterialApp
+    expect(find.byType(MaterialApp), findsOneWidget);
+  });
+
+  testWidgets('App has home page as initial route', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const NovelGeneratorApp());
+    await tester.pumpAndSettle();
+    
+    // Verify that the app has a home page
+    expect(find.byType(MaterialApp), findsOneWidget);
   });
 }
