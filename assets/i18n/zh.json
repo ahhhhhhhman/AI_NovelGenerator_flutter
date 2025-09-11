@@ -39,5 +39,6 @@
   "webdav_confirm_restore_message": "这将覆盖您当前的配置。您确定吗？",
   "webdav_cancel": "取消",
   "webdav_restore_button": "恢复",
-  "webdav_error": "错误"
+  "webdav_error": "错误",
+  "webdav_config_saved": "WebDAV配置已保存"
 }

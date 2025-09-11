@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import '../../app/localizations/app_localizations.dart';
 import '../../utils/config_service.dart';
 import '../../utils/webdav_service.dart';
+import '../../domain/services/logger_service.dart';
 
 class OtherSettingsPage extends StatefulWidget {
   const OtherSettingsPage({super.key});
@@ -14,6 +16,8 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
   final _urlController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  Timer? _debounceTimer;
 
   bool _isTesting = false;
   bool _isBackuping = false;
@@ -42,16 +46,45 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
   }
 
   /// 保存WebDAV配置
-  Future<void> _saveWebDAVConfig() async {
-    await ConfigService().set('webdav_config.webdav_url', _urlController.text);
-    await ConfigService().set(
-      'webdav_config.webdav_username',
-      _usernameController.text,
-    );
-    await ConfigService().set(
-      'webdav_config.webdav_password',
-      _passwordController.text,
-    );
+  Future<void> saveWebDAVConfig() async {
+    // 收集配置服务实例
+    final configService = ConfigService();
+    
+    // 设置所有WebDAV配置项但不立即保存
+    await configService.set('webdav_config.webdav_url', _urlController.text, saveToFile: false);
+    await configService.set('webdav_config.webdav_username', _usernameController.text, saveToFile: false);
+    await configService.set('webdav_config.webdav_password', _passwordController.text, saveToFile: false);
+    
+    // 手动触发一次保存
+    await configService.set('webdav_config', configService.get('webdav_config'));
+    
+    LoggerService().logInfo('WebDAV configuration saved');
+    
+    // 显示保存成功的提示
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).translate('webdav_config_saved')),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  /// 防抖保存WebDAV配置
+  void _debounceSaveWebDAVConfig() {
+    // 取消之前的定时器
+    _debounceTimer?.cancel();
+    
+    // 启动新的定时器
+    _debounceTimer = Timer(const Duration(seconds: 3), () {
+      // 检查widget是否仍然挂载
+      if (mounted) {
+        saveWebDAVConfig();
+      }
+    });
   }
 
   /// 测试WebDAV连接
@@ -70,14 +103,18 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
     bool success = false;
     try {
       // 先保存配置
-      await _saveWebDAVConfig();
+      await saveWebDAVConfig();
 
       // 测试连接
+      LoggerService().logInfo('Starting WebDAV connection test');
       success = await WebDAVService().testConnection();
       result = success
           ? localizations.translate('webdav_connection_successful')
           : localizations.translate('webdav_connection_failed');
+      
+      LoggerService().logInfo('WebDAV connection test result: ${success ? "successful" : "failed"}');
     } catch (e) {
+      LoggerService().logError('Error during WebDAV connection test: $e');
       result = 'Error: ${e.toString()}';
     }
 
@@ -106,14 +143,18 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
     bool success = false;
     try {
       // 先保存配置
-      await _saveWebDAVConfig();
+      await saveWebDAVConfig();
 
       // 执行备份
+      LoggerService().logInfo('Starting WebDAV backup operation');
       success = await WebDAVService().backupConfig();
       result = success
           ? localizations.translate('webdav_backup_successful')
           : localizations.translate('webdav_backup_failed');
+      
+      LoggerService().logInfo('WebDAV backup result: ${success ? "successful" : "failed"}');
     } catch (e) {
+      LoggerService().logError('Error during WebDAV backup: $e');
       result = 'Error: ${e.toString()}';
     }
 
@@ -142,7 +183,7 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
     bool success = false;
     try {
       // 先保存配置
-      await _saveWebDAVConfig();
+      await saveWebDAVConfig();
 
       // 确认操作
       if (!context.mounted) return;
@@ -168,12 +209,16 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
 
       if (shouldProceed == true) {
         // 执行恢复
+        LoggerService().logInfo('Starting WebDAV restore operation');
         success = await WebDAVService().restoreConfig();
         result = success
             ? localizations.translate('webdav_restore_successful')
             : localizations.translate('webdav_restore_failed');
+        
+        LoggerService().logInfo('WebDAV restore result: ${success ? "successful" : "failed"}');
       }
     } catch (e) {
+      LoggerService().logError('Error during WebDAV restore: $e');
       result = 'Error: ${e.toString()}';
     }
 
@@ -214,7 +259,7 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
                         labelText: localizations.translate('webdav_url'),
                         border: OutlineInputBorder(),
                       ),
-                      onChanged: (_) => _saveWebDAVConfig(),
+                      onChanged: (_) => _debounceSaveWebDAVConfig(),
                     ),
                     SizedBox(height: 16),
                     TextField(
@@ -223,7 +268,7 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
                         labelText: localizations.translate('webdav_username'),
                         border: OutlineInputBorder(),
                       ),
-                      onChanged: (_) => _saveWebDAVConfig(),
+                      onChanged: (_) => _debounceSaveWebDAVConfig(),
                     ),
                     SizedBox(height: 16),
                     TextField(
@@ -233,7 +278,7 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
                         border: OutlineInputBorder(),
                       ),
                       obscureText: true,
-                      onChanged: (_) => _saveWebDAVConfig(),
+                      onChanged: (_) => _debounceSaveWebDAVConfig(),
                     ),
                     SizedBox(height: 16),
                     // 按钮行 - 使用Flexible确保在小屏幕上也能正确显示
@@ -377,6 +422,7 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
     _urlController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
+    _debounceTimer?.cancel();
     super.dispose();
   }
 }

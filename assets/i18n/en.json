@@ -39,5 +39,6 @@
   "webdav_confirm_restore_message": "This will overwrite your current configuration. Are you sure?",
   "webdav_cancel": "Cancel",
   "webdav_restore_button": "Restore",
-  "webdav_error": "Error"
+  "webdav_error": "Error",
+  "webdav_config_saved": "WebDAV configuration saved"
 }

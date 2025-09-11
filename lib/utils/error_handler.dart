@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
-import '../domain/services/log_service.dart';
+import '../domain/services/logger_service.dart';
 
 class ErrorHandler {
   static void handleError(Object error, StackTrace stackTrace) {
     // Global error handling
     if (kDebugMode) {
-      LogService().logError('Error: $error');
-      LogService().logError('Stack trace: $stackTrace');
+      LoggerService().logError('Error: $error');
+      LoggerService().logError('Stack trace: $stackTrace');
     }
     
     // In a real implementation, you might want to:
