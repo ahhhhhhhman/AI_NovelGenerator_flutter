@@ -1,0 +1,40 @@
+# .github/workflows/test.yml
+
+# 1️⃣ workflow 的名字（会显示在 GitHub Actions 页面）
+name: Flutter Test & Lint
+
+# 2️⃣ 触发条件：当 push 或 pull_request 时运行
+on: [push, pull_request]
+
+# 3️⃣ 定义任务（jobs）
+jobs:
+  # 任务 ID（自定义，如 test、build_android）
+  analyze_and_test:
+    # 任务显示名称（可选，带 emoji 更醒目 😊）
+    name: 🧪 Run Flutter Analyze + Test
+    # 在什么系统上运行（Flutter 支持 ubuntu-latest, windows-latest, macos-latest）
+    runs-on: ubuntu-latest
+
+    # 4️⃣ 步骤（steps）
+    steps:
+      # ① 检出代码
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      # ② 设置 Flutter 环境（使用社区流行 action）
+      - name: ⚙️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable # 可选: stable, beta, dev
+
+      # ③ 获取依赖
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+      # ④ 静态分析（检查代码规范）
+      - name: 🔍 Analyze code
+        run: flutter analyze
+
+      # ⑤ 运行单元测试
+      - name: 🧪 Run tests
+        run: flutter test
