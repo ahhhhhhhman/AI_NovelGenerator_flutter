@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import '../models/novel_setting.dart';
 import '../models/chapter.dart';
 import '../models/character.dart';
