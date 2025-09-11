@@ -5,8 +5,10 @@ class MainFeaturesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Main Features Page - Placeholder content'),
+    return SingleChildScrollView(
+      child: Center(
+        child: Text('Main Features Page - Placeholder content'),
+      ),
     );
   }
 }

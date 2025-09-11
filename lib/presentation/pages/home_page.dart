@@ -58,7 +58,9 @@ class _HomePageState extends State<HomePage> {
         onDestinationSelected: _onDestinationSelected,
         selectedIndex: _selectedIndex,
       ),
-      body: _pages[_selectedIndex],
+      body: SingleChildScrollView(
+        child: _pages[_selectedIndex],
+      ),
     );
   }
 }

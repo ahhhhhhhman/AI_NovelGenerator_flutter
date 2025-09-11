@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import '../domain/services/log_service.dart';
+import '../domain/services/logger_service.dart';
 
 class ConfigService {
   static final ConfigService _instance = ConfigService._internal();
@@ -18,102 +18,107 @@ class ConfigService {
     try {
       final appDocDir = await getApplicationDocumentsDirectory();
       // 创建应用特定的目录
-      final appDir = Directory(path.join(appDocDir.path, 'novel_generator_flutter'));
+      final appDir = Directory(
+        path.join(appDocDir.path, 'novel_generator_flutter'),
+      );
       if (!await appDir.exists()) {
         await appDir.create(recursive: true);
       }
-      
+
       final configPath = path.join(appDir.path, 'config.json');
       final configFile = File(configPath);
 
       // 检查config.json是否存在
       if (!await configFile.exists()) {
         // 从assets中读取config.example.json
-        final exampleConfig = await rootBundle.loadString('assets/config/config.example.json');
-        
+        final exampleConfig = await rootBundle.loadString(
+          'assets/config/config.example.json',
+        );
+
         // 写入到应用文档目录
         await configFile.writeAsString(exampleConfig);
-        LogService().logInfo('Created config.json from config.example.json');
+        LoggerService().logInfo('Created config.json from config.example.json');
       }
 
       // 读取配置文件
       final configString = await configFile.readAsString();
       _config = json.decode(configString);
-      LogService().logInfo('Configuration loaded successfully');
+      LoggerService().logInfo('Configuration loaded successfully');
     } catch (e) {
-      LogService().logError('Error initializing configuration: $e');
+      LoggerService().logError('Error initializing configuration: $e');
       // 使用默认配置
       _config = {
-          "last_interface_format": "OpenAI",
-          "last_embedding_interface_format": "OpenAI",
-          "llm_configs": {
-              "DeepSeek V3": {
-                  "api_key": "",
-                  "base_url": "https://api.deepseek.com/v1",
-                  "model_name": "deepseek-chat",
-                  "temperature": 0.7,
-                  "max_tokens": 8192,
-                  "timeout": 600,
-                  "interface_format": "OpenAI"
-              },
-              "GPT 5": {
-                  "api_key": "",
-                  "base_url": "https://api.openai.com/v1",
-                  "model_name": "gpt-5",
-                  "temperature": 0.7,
-                  "max_tokens": 32768,
-                  "timeout": 600,
-                  "interface_format": "OpenAI"
-              },
-              "Gemini 2.5 Pro": {
-                  "api_key": "",
-                  "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
-                  "model_name": "gemini-2.5-pro",
-                  "temperature": 0.7,
-                  "max_tokens": 32768,
-                  "timeout": 600,
-                  "interface_format": "OpenAI"
-              }
+        "last_interface_format": "OpenAI",
+        "last_embedding_interface_format": "OpenAI",
+        "llm_configs": {
+          "DeepSeek V3": {
+            "api_key": "",
+            "base_url": "https://api.deepseek.com/v1",
+            "model_name": "deepseek-chat",
+            "temperature": 0.7,
+            "max_tokens": 8192,
+            "timeout": 600,
+            "interface_format": "OpenAI",
           },
-          "embedding_configs": {
-              "OpenAI": {
-                  "api_key": "",
-                  "base_url": "https://api.openai.com/v1",
-                  "model_name": "text-embedding-ada-002",
-                  "retrieval_k": 4,
-                  "interface_format": "OpenAI"
-              }
+          "GPT 5": {
+            "api_key": "",
+            "base_url": "https://api.openai.com/v1",
+            "model_name": "gpt-5",
+            "temperature": 0.7,
+            "max_tokens": 32768,
+            "timeout": 600,
+            "interface_format": "OpenAI",
           },
-          "other_params": {
-              "topic": "",
-              "genre": "",
-              "num_chapters": 0,
-              "word_number": 0,
-              "filepath": "",
-              "chapter_num": "120",
-              "user_guidance": "",
-              "characters_involved": "",
-              "key_items": "",
-              "scene_location": "",
-              "time_constraint": ""
+          "Gemini 2.5 Pro": {
+            "api_key": "",
+            "base_url":
+                "https://generativelanguage.googleapis.com/v1beta/openai",
+            "model_name": "gemini-2.5-pro",
+            "temperature": 0.7,
+            "max_tokens": 32768,
+            "timeout": 600,
+            "interface_format": "OpenAI",
           },
-          "choose_configs": {
-              "prompt_draft_llm": "DeepSeek V3",
-              "chapter_outline_llm": "DeepSeek V3",
-              "architecture_llm": "Gemini 2.5 Pro",
-              "final_chapter_llm": "GPT 5",
-              "consistency_review_llm": "DeepSeek V3"
+        },
+        "embedding_configs": {
+          "OpenAI": {
+            "api_key": "",
+            "base_url": "https://api.openai.com/v1",
+            "model_name": "text-embedding-ada-002",
+            "retrieval_k": 4,
+            "interface_format": "OpenAI",
           },
-          "proxy_setting": {
-              "proxy_url": "127.0.0.1",
-              "proxy_port": "",
-              "enabled": false
-          },
-          "webdav_config": {
-              "webdav_url": "",
-              "webdav_username": "",
-              "webdav_password": ""
-          }
+        },
+        "other_params": {
+          "topic": "",
+          "genre": "",
+          "num_chapters": 0,
+          "word_number": 0,
+          "filepath": "",
+          "chapter_num": "120",
+          "user_guidance": "",
+          "characters_involved": "",
+          "key_items": "",
+          "scene_location": "",
+          "time_constraint": "",
+        },
+        "choose_configs": {
+          "prompt_draft_llm": "DeepSeek V3",
+          "chapter_outline_llm": "DeepSeek V3",
+          "architecture_llm": "Gemini 2.5 Pro",
+          "final_chapter_llm": "GPT 5",
+          "consistency_review_llm": "DeepSeek V3",
+        },
+        "proxy_setting": {
+          "proxy_url": "127.0.0.1",
+          "proxy_port": "",
+          "enabled": false,
+        },
+        "webdav_config": {
+          "webdav_url": "",
+          "webdav_username": "",
+          "webdav_password": "",
+        },
       };
     }
   }
@@ -121,11 +126,11 @@ class ConfigService {
   /// 获取配置值
   dynamic get(String key) {
     if (_config == null) return null;
-    
+
     // 支持点号分隔的嵌套键，例如 "default_settings.theme"
     final keys = key.split('.');
     dynamic value = _config;
-    
+
     for (final k in keys) {
       if (value is Map && value.containsKey(k)) {
         value = value[k];
@@ -133,7 +138,7 @@ class ConfigService {
         return null;
       }
     }
-    
+
     return value;
   }
 
@@ -143,13 +148,13 @@ class ConfigService {
   }
 
   /// 更新配置值
-  Future<void> set(String key, dynamic value) async {
+  Future<void> set(String key, dynamic value, {bool saveToFile = true}) async {
     if (_config == null) return;
-    
+
     // 支持点号分隔的嵌套键
     final keys = key.split('.');
     dynamic config = _config;
-    
+
     for (int i = 0; i < keys.length - 1; i++) {
       final k = keys[i];
       if (!config.containsKey(k) || config[k] is! Map) {
@@ -157,25 +162,33 @@ class ConfigService {
       }
       config = config[k];
     }
-    
+
     config[keys.last] = value;
-    
+
     // 保存到文件
-    await _saveConfig();
+    if (saveToFile) {
+      await _saveConfig();
+    }
   }
 
   /// 保存配置到文件
   Future<void> _saveConfig() async {
     try {
       final appDocDir = await getApplicationDocumentsDirectory();
-      final configPath = path.join(appDocDir.path, 'config.json');
+      final appDir = Directory(
+        path.join(appDocDir.path, 'novel_generator_flutter'),
+      );
+      final configPath = path.join(appDir.path, 'config.json');
       final configFile = File(configPath);
-      
-      final configString = json.encode(_config);
+
+      final encoder = JsonEncoder.withIndent('  ');
+      final configString = encoder.convert(_config);
       await configFile.writeAsString(configString);
-      LogService().logInfo('Configuration saved successfully');
+      LoggerService().logInfo(
+        'Configuration saved successfully to: $configPath',
+      );
     } catch (e) {
-      LogService().logError('Error saving configuration: $e');
+      LoggerService().logError('Error saving configuration: $e');
     }
   }
 }

@@ -9,8 +9,10 @@ class LogPage extends StatelessWidget {
     final localizations = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(localizations.translate('log_title'))),
-      body: const Center(
-        child: Text('Log Page - View application logs'),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Text('Log Page - View application logs'),
+        ),
       ),
     );
   }

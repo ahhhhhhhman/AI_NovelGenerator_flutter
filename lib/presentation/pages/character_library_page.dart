@@ -9,8 +9,10 @@ class CharacterLibraryPage extends StatelessWidget {
     final localizations = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(localizations.translate('character_library_title'))),
-      body: const Center(
-        child: Text('Character Library Page - Manage characters'),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Text('Character Library Page - Manage characters'),
+        ),
       ),
     );
   }
