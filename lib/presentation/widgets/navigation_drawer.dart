@@ -94,6 +94,15 @@ class AppNavigationDrawer extends StatelessWidget {
               onDestinationSelected(6);
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.settings_applications),
+            title: Text(localizations.translate('nav_large_model_settings')),
+            selected: selectedIndex == 7,
+            onTap: () {
+              Navigator.pop(context);
+              onDestinationSelected(7);
+            },
+          ),
         ],
       ),
     );

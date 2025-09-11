@@ -13,6 +13,7 @@ import 'character_status_page.dart';
 import 'full_text_overview_page.dart';
 import 'chapter_management_page.dart';
 import 'other_settings_page.dart';
+import 'large_model_settings_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,6 +35,7 @@ class _HomePageState extends State<HomePage> {
     const FullTextOverviewPage(),
     const ChapterManagementPage(),
     const OtherSettingsPage(),
+    const LargeModelSettingsPage(),
   ];
 
   // 页面标题列表，与导航项对应
@@ -45,6 +47,7 @@ class _HomePageState extends State<HomePage> {
     'nav_full_text_overview',
     'nav_chapter_management',
     'nav_other_settings',
+    'nav_large_model_settings',
   ];
 
   void _onDestinationSelected(int index) {
