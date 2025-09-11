@@ -39,8 +39,10 @@ class _CharacterStatusPageState extends State<CharacterStatusPage> {
 
   // 处理小说选择变化
   void _onNovelSelected(String? folderName) {
-    // 如果有未保存的更改，提示用户
-    if (_selectedFolder != null && _characterStateContent != _textController.text) {
+    // 如果文件已存在且有未保存的更改，提示用户
+    if (_selectedFolder != null &&
+        _contentExists && // 添加对 _contentExists 的检查
+        _characterStateContent != _textController.text) {
       _confirmSaveBeforeChange(() {
         setState(() {
           _selectedFolder = folderName;
@@ -201,9 +203,15 @@ class _CharacterStatusPageState extends State<CharacterStatusPage> {
 
   @override
   void dispose() {
-    // 如果有未保存的更改，在页面销毁前保存
-    if (_selectedFolder != null && _characterStateContent != _textController.text) {
-      _saveCharacterStateContent(_selectedFolder!, _textController.text);
+    // 如果有未保存的更改，且文件已存在，则在页面销毁前保存
+    // 注意：这里不能使用 _saveCharacterStateContent，因为它会调用 setState，
+    // 而 dispose 时 widget 已经被标记为 defunct。
+    // 只有在文件已存在时才保存，避免创建新文件
+    if (_selectedFolder != null &&
+        _contentExists && // 添加对 _contentExists 的检查
+        _characterStateContent != _textController.text) {
+      // 直接调用 service 保存，不更新 UI 状态
+      NovelFileService().saveCharacterState(_selectedFolder!, _textController.text);
     }
     
     // 清除定时器
@@ -218,8 +226,13 @@ class _CharacterStatusPageState extends State<CharacterStatusPage> {
     final selectedNovel = context.watch<SelectedNovelProvider>().selectedNovel;
     
     // 如果选择状态发生变化，更新页面
+    // 使用 addPostFrameCallback 确保在 build 完成后才执行
     if (selectedNovel != _selectedFolder) {
-      _onNovelSelected(selectedNovel);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _onNovelSelected(selectedNovel);
+        }
+      });
     }
 
     final localizations = AppLocalizations.of(context);
