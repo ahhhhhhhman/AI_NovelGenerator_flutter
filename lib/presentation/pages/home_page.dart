@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../presentation/widgets/navigation_drawer.dart';
 import '../../presentation/widgets/novel_selector_dropdown.dart';
 import '../../app/localizations/app_localizations.dart';
@@ -171,8 +172,8 @@ class _HomePageState extends State<HomePage> {
               onSelected: (selectedFolder) {
                 // 处理选择的小说文件夹
                 if (selectedFolder != null) {
-                  // 这里可以添加处理逻辑
-                  // print('Selected novel folder: $selectedFolder');
+                  // 更新选择状态
+                  context.read<SelectedNovelProvider>().setSelectedNovel(selectedFolder);
                 }
               },
             ),
