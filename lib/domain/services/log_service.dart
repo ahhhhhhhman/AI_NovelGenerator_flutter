@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 class LogService {
   static final LogService _instance = LogService._internal();
@@ -9,19 +10,19 @@ class LogService {
   File? _logFile;
   IOSink? _logSink;
 
-  /// 返回项目根目录（包含 pubspec.yaml 的那一层）
-  Directory get _projectRoot {
-    // 当前脚本文件是 ...\<project>\lib\service\log_service.dart
-    final libFile = File(Platform.script.toFilePath());
-    // 向上跳 3 级即可到达项目根（可根据实际目录深度调整）
-    return libFile.parent;
-  }
-
   /// 初始化日志服务，创建新的日志文件
   Future<void> init() async {
     print('>>> LogService.init() start');
     try {
-      final logDir = Directory(path.join(_projectRoot.path, 'logs'));
+      // 获取应用程序文档目录
+      final appDocDir = await getApplicationDocumentsDirectory();
+      // 创建应用特定的目录
+      final appDir = Directory(path.join(appDocDir.path, 'novel_generator_flutter'));
+      if (!await appDir.exists()) {
+        await appDir.create(recursive: true);
+      }
+      
+      final logDir = Directory(path.join(appDir.path, 'logs'));
 
       // 创建日志目录（如果不存在）
       if (!await logDir.exists()) {

@@ -17,7 +17,13 @@ class ConfigService {
   Future<void> init() async {
     try {
       final appDocDir = await getApplicationDocumentsDirectory();
-      final configPath = path.join(appDocDir.path, 'config.json');
+      // 创建应用特定的目录
+      final appDir = Directory(path.join(appDocDir.path, 'novel_generator_flutter'));
+      if (!await appDir.exists()) {
+        await appDir.create(recursive: true);
+      }
+      
+      final configPath = path.join(appDir.path, 'config.json');
       final configFile = File(configPath);
 
       // 检查config.json是否存在
