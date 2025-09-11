@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'routes.dart';
 import 'localizations/app_localizations.dart';
+import '../presentation/theme/theme.dart';
 
 class NovelGeneratorApp extends StatelessWidget {
   const NovelGeneratorApp({super.key});
@@ -10,9 +11,7 @@ class NovelGeneratorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Novel Generator',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: appTheme,
       initialRoute: '/',
       onGenerateRoute: RouteGenerator.generateRoute,
       localizationsDelegates: const [

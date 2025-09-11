@@ -6,6 +6,9 @@
   "character_library_title": "Character Library",
   "log_title": "Logs",
   "loading": "Loading...",
+  "loading_failed": "Loading failed",
+  "no_novel_available": "No novels available",
+  "select_novel": "Select a novel",
   "step_buttons": "Step {step}",
   "text_editor_hint": "Enter text here...",
   "api_key_label": "API Key",
@@ -40,5 +43,11 @@
   "webdav_cancel": "Cancel",
   "webdav_restore_button": "Restore",
   "webdav_error": "Error",
-  "webdav_config_saved": "WebDAV configuration saved"
+  "webdav_config_saved": "WebDAV configuration saved",
+  "main_features_page_placeholder": "Main Features Page - Placeholder content",
+  "novel_architecture_page_placeholder": "Novel Architecture Page - Placeholder content",
+  "chapter_blueprint_page_placeholder": "Chapter Blueprint Page - Placeholder content",
+  "character_status_page_placeholder": "Character Status Page - Placeholder content",
+  "full_text_overview_page_placeholder": "Full Text Overview Page - Placeholder content",
+  "chapter_management_page_placeholder": "Chapter Management Page - Placeholder content"
 }

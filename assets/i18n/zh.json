@@ -6,6 +6,9 @@
   "character_library_title": "角色库",
   "log_title": "日志",
   "loading": "加载中...",
+  "loading_failed": "加载失败",
+  "no_novel_available": "无可用小说",
+  "select_novel": "请选择小说",
   "step_buttons": "步骤 {step}",
   "text_editor_hint": "在此输入文本...",
   "api_key_label": "API密钥",
@@ -40,5 +43,11 @@
   "webdav_cancel": "取消",
   "webdav_restore_button": "恢复",
   "webdav_error": "错误",
-  "webdav_config_saved": "WebDAV配置已保存"
+  "webdav_config_saved": "WebDAV配置已保存",
+  "main_features_page_placeholder": "主要功能页面 - 占位符内容",
+  "novel_architecture_page_placeholder": "小说架构页面 - 占位符内容",
+  "chapter_blueprint_page_placeholder": "章节蓝图页面 - 占位符内容",
+  "character_status_page_placeholder": "角色状态页面 - 占位符内容",
+  "full_text_overview_page_placeholder": "全文概述页面 - 占位符内容",
+  "chapter_management_page_placeholder": "章节管理页面 - 占位符内容"
 }
