@@ -5,8 +5,10 @@ class NovelArchitecturePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Novel Architecture Page - Placeholder content'),
+    return SingleChildScrollView(
+      child: Center(
+        child: Text('Novel Architecture Page - Placeholder content'),
+      ),
     );
   }
 }

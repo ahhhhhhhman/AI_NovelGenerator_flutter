@@ -5,8 +5,10 @@ class FullTextOverviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Full Text Overview Page - Placeholder content'),
+    return SingleChildScrollView(
+      child: Center(
+        child: Text('Full Text Overview Page - Placeholder content'),
+      ),
     );
   }
 }
