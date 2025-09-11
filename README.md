@@ -1,7 +1,7 @@
 # AI小说生成器 Flutter版
 
 一个基于Flutter开发的AI小说生成器应用程序，可以帮助用户快速生成小说内容、管理章节和角色等。
-为[[https://github.com/xxx/original-project](https://github.com/YILING0013/AI_NovelGenerator)的flutter重构。
+为[https://github.com/YILING0013/AI_NovelGenerator](https://github.com/YILING0013/AI_NovelGenerator)的flutter重构。
 
 ## 功能特性
 
