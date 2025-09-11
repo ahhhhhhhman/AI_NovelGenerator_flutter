@@ -41,6 +41,9 @@ class NovelSelectorDropdownState extends State<NovelSelectorDropdown> {
               ),
             ],
             onChanged: null,
+            // 添加以下属性以解决失焦问题
+            focusColor: Colors.transparent,
+            dropdownColor: Theme.of(context).canvasColor,
           );
         }
 
@@ -57,6 +60,9 @@ class NovelSelectorDropdownState extends State<NovelSelectorDropdown> {
               ),
             ],
             onChanged: null,
+            // 添加以下属性以解决失焦问题
+            focusColor: Colors.transparent,
+            dropdownColor: Theme.of(context).canvasColor,
           );
         }
 
@@ -75,6 +81,9 @@ class NovelSelectorDropdownState extends State<NovelSelectorDropdown> {
               ),
             ],
             onChanged: null,
+            // 添加以下属性以解决失焦问题
+            focusColor: Colors.transparent,
+            dropdownColor: Theme.of(context).canvasColor,
           );
         }
 
@@ -108,7 +117,13 @@ class NovelSelectorDropdownState extends State<NovelSelectorDropdown> {
                 LoggerService().logInfo('Selected novel folder: $value');
               }
             }
+            // 解决失焦问题：在选择后手动清除焦点
+            FocusScope.of(context).unfocus();
           },
+          // 添加以下属性以改善失焦行为
+          focusColor: Colors.transparent,
+          dropdownColor: Theme.of(context).canvasColor,
+          underline: Container(),
         );
       },
     );
