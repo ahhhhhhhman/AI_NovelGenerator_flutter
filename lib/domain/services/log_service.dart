@@ -12,7 +12,6 @@ class LogService {
 
   /// 初始化日志服务，创建新的日志文件
   Future<void> init() async {
-    print('>>> LogService.init() start');
     try {
       // 获取应用程序文档目录
       final appDocDir = await getApplicationDocumentsDirectory();
@@ -38,7 +37,7 @@ class LogService {
 
       logInfo('Log service initialized');
     } catch (e) {
-      print('Failed to initialize log service: $e');
+      logError('Failed to initialize log service: $e');
     }
   }
 
@@ -55,7 +54,6 @@ class LogService {
       _logSink!.flush();
     }
     if (bool.fromEnvironment('dart.vm.product') == false) {
-      print(logEntry.trim());
     }
   }
 
