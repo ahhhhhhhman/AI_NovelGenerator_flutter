@@ -4,6 +4,7 @@ import '../presentation/pages/setting_page.dart';
 import '../presentation/pages/novel_editor_page.dart';
 import '../presentation/pages/character_library_page.dart';
 import '../presentation/pages/log_page.dart';
+import '../presentation/pages/large_model_settings_page.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -18,6 +19,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const CharacterLibraryPage());
       case '/log':
         return MaterialPageRoute(builder: (_) => const LogPage());
+      case '/large_model_settings':
+        return MaterialPageRoute(builder: (_) => const LargeModelSettingsPage());
       default:
         return _errorRoute();
     }
