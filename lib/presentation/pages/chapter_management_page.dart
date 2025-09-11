@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/localizations/app_localizations.dart';
-import '../../data/datasources/local/novel_file_service.dart';
-import '../pages/novel_architecture_page.dart';
 import '../../data/datasources/local/novel_file_service.dart';
 import '../pages/novel_architecture_page.dart';
 
