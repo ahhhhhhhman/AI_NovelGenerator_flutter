@@ -3,21 +3,8 @@ import '../../domain/services/novel_folder_service.dart';
 import '../../domain/services/logger_service.dart';
 import '../../app/localizations/app_localizations.dart';
 
-class NovelSelectorDropdown extends StatefulWidget {
-  final Function(String?)? onSelected;
-  final String? initialValue;
-
-  const NovelSelectorDropdown({
-    super.key,
-    this.onSelected,
-    this.initialValue,
-  });
-
-  @override
-  State<NovelSelectorDropdown> createState() => _NovelSelectorDropdownState();
-}
-
-class _NovelSelectorDropdownState extends State<NovelSelectorDropdown> {
+// 将状态类改为公开的
+class NovelSelectorDropdownState extends State<NovelSelectorDropdown> {
   late Future<List<String>> _novelFoldersFuture;
   String? _selectedFolder;
 
@@ -26,6 +13,13 @@ class _NovelSelectorDropdownState extends State<NovelSelectorDropdown> {
     super.initState();
     _selectedFolder = widget.initialValue;
     _novelFoldersFuture = NovelFolderService().getNovelFolderNames();
+  }
+
+  // 刷新小说文件夹列表的方法
+  void refreshNovelFolders() {
+    setState(() {
+      _novelFoldersFuture = NovelFolderService().getNovelFolderNames();
+    });
   }
 
   @override
@@ -119,4 +113,18 @@ class _NovelSelectorDropdownState extends State<NovelSelectorDropdown> {
       },
     );
   }
+}
+
+class NovelSelectorDropdown extends StatefulWidget {
+  final Function(String?)? onSelected;
+  final String? initialValue;
+
+  const NovelSelectorDropdown({
+    super.key,
+    this.onSelected,
+    this.initialValue,
+  });
+
+  @override
+  State<NovelSelectorDropdown> createState() => NovelSelectorDropdownState();
 }

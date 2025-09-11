@@ -49,5 +49,12 @@
   "chapter_blueprint_page_placeholder": "Chapter Blueprint Page - Placeholder content",
   "character_status_page_placeholder": "Character Status Page - Placeholder content",
   "full_text_overview_page_placeholder": "Full Text Overview Page - Placeholder content",
-  "chapter_management_page_placeholder": "Chapter Management Page - Placeholder content"
+  "chapter_management_page_placeholder": "Chapter Management Page - Placeholder content",
+  "add_novel": "Add Novel",
+  "enter_novel_name": "Enter novel name",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "novel_already_exists": "Novel '{1}' already exists",
+  "novel_created_successfully": "Novel '{1}' created successfully",
+  "failed_to_create_novel": "Failed to create novel '{1}'"
 }
