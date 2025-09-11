@@ -96,10 +96,11 @@ class _ChapterBlueprintPageState extends State<ChapterBlueprintPage> {
   void _scheduleSave() {
     // 取消之前的定时器
     _saveTimer?.cancel();
-    
+
     // 设置新的定时器，在2秒后保存
     _saveTimer = Timer(const Duration(seconds: 2), () {
-      if (_selectedFolder != null && _directoryContent != _textController.text) {
+      if (_selectedFolder != null &&
+          _directoryContent != _textController.text) {
         _saveDirectoryContent(_selectedFolder!, _textController.text);
       }
     });
@@ -110,21 +111,26 @@ class _ChapterBlueprintPageState extends State<ChapterBlueprintPage> {
     setState(() {
       _isSaving = true;
     });
-    
+
     try {
-      final success = await NovelFileService().saveDirectory(folderName, content);
+      final success = await NovelFileService().saveDirectory(
+        folderName,
+        content,
+      );
       if (success) {
         setState(() {
           _directoryContent = content;
           _contentExists = true;
           _isSaving = false;
         });
-        
+
         // 显示保存成功的提示
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context).translate('save_successful')),
+              content: Text(
+                AppLocalizations.of(context).translate('save_successful'),
+              ),
               backgroundColor: Colors.green,
             ),
           );
@@ -133,12 +139,14 @@ class _ChapterBlueprintPageState extends State<ChapterBlueprintPage> {
         setState(() {
           _isSaving = false;
         });
-        
+
         // 显示保存失败的提示
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context).translate('save_failed')),
+              content: Text(
+                AppLocalizations.of(context).translate('save_failed'),
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -148,12 +156,14 @@ class _ChapterBlueprintPageState extends State<ChapterBlueprintPage> {
       setState(() {
         _isSaving = false;
       });
-      
+
       // 显示保存失败的提示
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).translate('save_failed')),
+            content: Text(
+              AppLocalizations.of(context).translate('save_failed'),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -164,7 +174,7 @@ class _ChapterBlueprintPageState extends State<ChapterBlueprintPage> {
   // 确认保存更改
   void _confirmSaveBeforeChange(VoidCallback onConfirmed) {
     final localizations = AppLocalizations.of(context);
-    
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -190,7 +200,10 @@ class _ChapterBlueprintPageState extends State<ChapterBlueprintPage> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 if (_selectedFolder != null) {
-                  await _saveDirectoryContent(_selectedFolder!, _textController.text);
+                  await _saveDirectoryContent(
+                    _selectedFolder!,
+                    _textController.text,
+                  );
                   onConfirmed();
                 }
               },
@@ -213,7 +226,7 @@ class _ChapterBlueprintPageState extends State<ChapterBlueprintPage> {
       // 直接调用 service 保存，不更新 UI 状态
       NovelFileService().saveDirectory(_selectedFolder!, _textController.text);
     }
-    
+
     // 清除定时器
     _saveTimer?.cancel();
     _textController.dispose();
@@ -224,7 +237,7 @@ class _ChapterBlueprintPageState extends State<ChapterBlueprintPage> {
   Widget build(BuildContext context) {
     // 监听选择状态的变化
     final selectedNovel = context.watch<SelectedNovelProvider>().selectedNovel;
-    
+
     // 如果选择状态发生变化，更新页面
     // 使用 addPostFrameCallback 确保在 build 完成后才执行
     if (selectedNovel != _selectedFolder) {
@@ -236,7 +249,7 @@ class _ChapterBlueprintPageState extends State<ChapterBlueprintPage> {
     }
 
     final localizations = AppLocalizations.of(context);
-    
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -252,9 +265,8 @@ class _ChapterBlueprintPageState extends State<ChapterBlueprintPage> {
                   Text(localizations.translate('saving')),
                 ],
               ),
-            if (_isSaving)
-              const SizedBox(height: 8),
-            
+            if (_isSaving) const SizedBox(height: 8),
+
             // 文本编辑区域
             if (_selectedFolder == null)
               // 未选择小说时显示提示
