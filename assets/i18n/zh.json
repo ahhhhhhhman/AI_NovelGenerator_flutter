@@ -124,5 +124,17 @@
   "blueprint_generated": "章节蓝图已生成",
   "failed_to_save_architecture": "保存小说架构失败",
   "failed_to_generate_architecture": "生成小说架构失败",
-  "failed_to_generate_blueprint": "生成章节蓝图失败"
+  "failed_to_generate_blueprint": "生成章节蓝图失败",
+  "generate_chapter": "生成章节",
+  "chapter_number": "章节号",
+  "expected_word_count": "期望字数",
+  "content_guidance": "内容指导",
+  "core_characters": "核心人物",
+  "key_items": "关键道具",
+  "time_pressure": "时间压力",
+  "spatial_coordinates": "空间坐标",
+  "chapter_number_required": "章节号不能为空",
+  "chapter_number_must_be_positive": "章节号必须大于0",
+  "word_count_must_be_positive": "期望字数必须大于0",
+  "chapter_generation_not_implemented": "章节生成功能尚未实现"
 }

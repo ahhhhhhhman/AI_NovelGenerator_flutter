@@ -124,5 +124,17 @@
   "blueprint_generated": "Chapter blueprint generated",
   "failed_to_save_architecture": "Failed to save novel architecture",
   "failed_to_generate_architecture": "Failed to generate novel architecture",
-  "failed_to_generate_blueprint": "Failed to generate chapter blueprint"
+  "failed_to_generate_blueprint": "Failed to generate chapter blueprint",
+  "generate_chapter": "Generate Chapter",
+  "chapter_number": "Chapter Number",
+  "expected_word_count": "Expected Word Count",
+  "content_guidance": "Content Guidance",
+  "core_characters": "Core Characters",
+  "key_items": "Key Items",
+  "time_pressure": "Time Pressure",
+  "spatial_coordinates": "Spatial Coordinates",
+  "chapter_number_required": "Chapter number cannot be empty",
+  "chapter_number_must_be_positive": "Chapter number must be greater than 0",
+  "word_count_must_be_positive": "Expected word count must be greater than 0",
+  "chapter_generation_not_implemented": "Chapter generation feature not implemented yet"
 }
