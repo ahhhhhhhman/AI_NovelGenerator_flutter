@@ -235,6 +235,307 @@ $chapterList
 仅给出最终文本，不要解释任何内容。''';
   }
 
+  /// 生成第一章草稿提示
+  String generateFirstChapterDraftPrompt({
+    required int novelNumber,
+    required String chapterTitle,
+    required String chapterRole,
+    required String chapterPurpose,
+    required String suspenseLevel,
+    required String foreshadowing,
+    required String plotTwistLevel,
+    required String chapterSummary,
+    required String charactersInvolved,
+    required String keyItems,
+    required String sceneLocation,
+    required String timeConstraint,
+    required String novelArchitectureText,
+    required int wordNumber,
+    required String userGuidance,
+  }) {
+    return '''即将创作：第 $novelNumber 章《$chapterTitle》
+本章定位：$chapterRole
+核心作用：$chapterPurpose
+悬念密度：$suspenseLevel
+伏笔操作：$foreshadowing
+认知颠覆：$plotTwistLevel
+本章简述：$chapterSummary
+
+可用元素：
+- 核心人物(可能未指定)：$charactersInvolved
+- 关键道具(可能未指定)：$keyItems
+- 空间坐标(可能未指定)：$sceneLocation
+- 时间压力(可能未指定)：$timeConstraint
+
+参考文档：
+- 小说设定：
+$novelArchitectureText
+
+完成第 $novelNumber 章的正文，字数要求$wordNumber字，至少设计下方2个或以上具有动态张力的场景：
+1. 对话场景：
+   - 潜台词冲突（表面谈论A，实际博弈B）
+   - 权力关系变化（通过非对称对话长度体现）
+
+2. 动作场景：
+   - 环境交互细节（至少3个感官描写）
+   - 节奏控制（短句加速+比喻减速）
+   - 动作揭示人物隐藏特质
+
+3. 心理场景：
+   - 认知失调的具体表现（行为矛盾）
+   - 隐喻系统的运用（连接世界观符号）
+   - 决策前的价值天平描写
+
+4. 环境场景：
+   - 空间透视变化（宏观→微观→异常焦点）
+   - 非常规感官组合（如"听见阳光的重量"）
+   - 动态环境反映心理（环境与人物心理对应）
+
+格式要求：
+- 仅返回章节正文文本；
+- 不使用分章节小标题；
+- 不要使用markdown格式。
+
+额外指导(可能未指定)：$userGuidance''';
+  }
+
+  /// 生成后续章节草稿提示
+  String generateNextChapterDraftPrompt({
+    required String globalSummary,
+    required String previousChapterExcerpt,
+    required String userGuidance,
+    required String characterState,
+    required String shortSummary,
+    required int novelNumber,
+    required String chapterTitle,
+    required String chapterRole,
+    required String chapterPurpose,
+    required String suspenseLevel,
+    required String foreshadowing,
+    required String plotTwistLevel,
+    required String chapterSummary,
+    required int wordNumber,
+    required String charactersInvolved,
+    required String keyItems,
+    required String sceneLocation,
+    required String timeConstraint,
+    required int nextChapterNumber,
+    required String nextChapterTitle,
+    required String nextChapterRole,
+    required String nextChapterPurpose,
+    required String nextChapterSuspenseLevel,
+    required String nextChapterForeshadowing,
+    required String nextChapterPlotTwistLevel,
+    required String nextChapterSummary,
+  }) {
+    return '''参考文档：
+└── 前文摘要：
+    $globalSummary
+
+└── 前章结尾段：
+    $previousChapterExcerpt
+
+└── 用户指导：
+    $userGuidance
+
+└── 角色状态：
+    $characterState
+
+└── 当前章节摘要：
+    $shortSummary
+
+当前章节信息：
+第$novelNumber章《$chapterTitle》：
+├── 章节定位：$chapterRole
+├── 核心作用：$chapterPurpose
+├── 悬念密度：$suspenseLevel
+├── 伏笔设计：$foreshadowing
+├── 转折程度：$plotTwistLevel
+├── 章节简述：$chapterSummary
+├── 字数要求：$wordNumber字
+├── 核心人物：$charactersInvolved
+├── 关键道具：$keyItems
+├── 场景地点：$sceneLocation
+└── 时间压力：$timeConstraint
+
+下一章节目录
+第$nextChapterNumber章《$nextChapterTitle》：
+├── 章节定位：$nextChapterRole
+├── 核心作用：$nextChapterPurpose
+├── 悬念密度：$nextChapterSuspenseLevel
+├── 伏笔设计：$nextChapterForeshadowing
+├── 转折程度：$nextChapterPlotTwistLevel
+└── 章节简述：$nextChapterSummary
+
+依据前面所有设定，开始完成第 $novelNumber 章的正文，字数要求$wordNumber字，
+内容生成严格遵循：
+-用户指导
+-当前章节摘要
+-当前章节信息
+-无逻辑漏洞,
+确保章节内容与前文摘要、前章结尾段衔接流畅、下一章目录保证上下文完整性，
+
+格式要求：
+- 仅返回章节正文文本；
+- 不使用分章节小标题；
+- 不要使用markdown格式。''';
+  }
+
+  /// 生成当前章节摘要提示 (基于 prompt_definitions.py 的 11-59 行)
+  String generateShortSummaryPrompt({
+    required String combinedText, // 前三章内容
+    required int novelNumber, // 当前章节号
+    required String chapterTitle, // 当前章节标题
+    required String chapterRole, // 当前章节角色定位
+    required String chapterPurpose, // 当前章节核心作用
+    required String suspenseLevel, // 当前章节悬念密度
+    required String foreshadowing, // 当前章节伏笔操作
+    required String plotTwistLevel, // 当前章节认知颠覆
+    required String chapterSummary, // 当前章节简述
+    required int nextChapterNumber, // 下一章节号
+    required String nextChapterTitle, // 下一章节标题
+    required String nextChapterRole, // 下一章节角色定位
+    required String nextChapterPurpose, // 下一章节核心作用
+    required String nextChapterSuspenseLevel, // 下一章节悬念密度
+    required String nextChapterForeshadowing, // 下一章节伏笔操作
+    required String nextChapterPlotTwistLevel, // 下一章节认知颠覆
+    required String nextChapterSummary, // 下一章节简述
+  }) {
+    // 构建 prompt_definitions.py 中 summarize_recent_chapters_prompt 的内容
+    return '''作为一名专业的小说编辑和知识管理专家，正在基于已完成的前三章内容和本章信息生成当前章节的精准摘要。请严格遵循以下工作流程：
+前三章内容：
+$combinedText
+
+当前章节信息：
+第$novelNumber章《$chapterTitle》：
+├── 本章定位：$chapterRole
+├── 核心作用：$chapterPurpose
+├── 悬念密度：$suspenseLevel
+├── 伏笔操作：$foreshadowing
+├── 认知颠覆：$plotTwistLevel
+└── 本章简述：$chapterSummary
+
+下一章信息：
+第$nextChapterNumber章《$nextChapterTitle》：
+├── 本章定位：$nextChapterRole
+├── 核心作用：$nextChapterPurpose
+├── 悬念密度：$nextChapterSuspenseLevel
+├── 伏笔操作：$nextChapterForeshadowing
+├── 认知颠覆：$nextChapterPlotTwistLevel
+└── 本章简述：$nextChapterSummary
+
+**上下文分析阶段**：
+1. 回顾前三章核心内容：
+   - 第一章核心要素：[章节标题]→[核心冲突/理论]→[关键人物/概念]
+   - 第二章发展路径：[已建立的人物关系]→[技术/情节进展]→[遗留伏笔]
+   - 第三章转折点：[新出现的变量]→[世界观扩展]→[待解决问题]
+2. 提取延续性要素：
+   - 必继承要素：列出前3章中必须延续的3个核心设定
+   - 可调整要素：识别2个允许适度变化的辅助设定
+
+**当前章节摘要生成规则**：
+1. 内容架构：
+   - 继承权重：70%内容需与前3章形成逻辑递进
+   - 创新空间：30%内容可引入新要素，但需标注创新类型（如：技术突破/人物黑化）
+2. 结构控制：
+   - 采用"承继→发展→铺垫"三段式结构
+   - 每段含1个前文呼应点+1个新进展
+3. 预警机制：
+   - 若检测到与前3章设定冲突，用[!]标记并说明
+   - 对开放式发展路径，提供2种合理演化方向
+
+现在请你基于目前故事的进展，完成以下两件事：
+用最多800字，写一个简洁明了的「当前章节摘要」；
+
+请按如下格式输出（不需要额外解释）：
+当前章节摘要: <这里写当前章节摘要>''';
+  }
+
+  /// 生成更新全局摘要的提示 (基于 prompt_definitions.py 的 361-377 行)
+  String generateUpdateSummaryPrompt({
+    required String chapterText,
+    required String globalSummary,
+  }) {
+    return '''以下是新完成的章节文本：
+$chapterText
+
+这是当前的前文摘要（可为空）：
+$globalSummary
+
+请根据本章新增内容，更新前文摘要。
+要求：
+- 保留既有重要信息，同时融入新剧情要点
+- 以简洁、连贯的语言描述全书进展
+- 客观描绘，不展开联想或解释
+- 总字数控制在2000字以内
+
+仅返回前文摘要文本，不要解释任何内容。''';
+  }
+
+  /// 生成更新角色状态的提示 (基于 prompt_definitions.py 的 431-489 行)
+  String generateUpdateCharacterStatePrompt({
+    required String chapterText,
+    required String oldState,
+  }) {
+    return '''以下是新完成的章节文本：
+$chapterText
+
+这是当前的角色状态文档：
+$oldState
+
+请更新主要角色状态，内容格式：
+例：
+张三：
+├──物品:
+│  ├──青衫：一件破损的青色长袍，带有暗红色的污渍
+│  └──寒铁长剑：一柄断裂的铁剑，剑身上刻有古老的符文
+├──能力
+│  ├──技能1：强大的精神感知能力：能够察觉到周围人的心中活动
+│  └──技能2：无形攻击：能够释放一种无法被视觉捕捉的精神攻击
+├──状态
+│  ├──身体状态: 身材挺拔，穿着华丽的铠甲，面色冷峻
+│  └──心理状态: 目前的心态比较平静，但内心隐藏着对柳溪镇未来掌控的野心和不安
+├──主要角色间关系网
+│  ├──李四：张三从小就与她有关联，对她的成长一直保持关注
+│  └──王二：两人之间有着复杂的过去，最近因一场冲突而让对方感到威胁
+├──触发或加深的事件
+│  ├──村庄内突然出现不明符号：这个不明符号似乎在暗示柳溪镇即将发生重大事件
+│  └──李四被刺穿皮肤：这次事件让两人意识到对方的强大实力，促使他们迅速离开队伍
+
+角色名：
+├──物品:
+│  ├──某物(道具)：描述
+│  └──XX长剑(武器)：描述
+│   ...
+├──能力
+│  ├──技能1：描述
+│  └──技能2：描述
+│   ...
+├──状态
+│  ├──身体状态：
+│  └──心理状态：描述
+│    
+├──主要角色间关系网
+│  ├──李四：描述
+│  └──王二：描述
+│   ...
+├──触发或加深的事件
+│  ├──事件1：描述
+│  └──事件2：描述
+    ...
+
+......
+
+新出场角色：
+- 任何新增角色或临时出场人物的基本信息，简要描述即可，不要展开，淡出视线的角色可删除。
+
+要求：
+- 请直接在已有文档基础上进行增删
+- 不改变原有结构，语言尽量简洁、有条理
+
+仅返回更新后的角色状态文本，不要解释任何内容。''';
+  }
+
   /// 获取配置参数
   Map<String, dynamic> getOtherParams() {
     final config = ConfigService().getAll();

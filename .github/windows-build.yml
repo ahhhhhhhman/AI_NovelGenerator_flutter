@@ -1,0 +1,41 @@
+name: Build and Release Windows
+
+on:
+  push:
+    tags:
+      - 'v*'  # 只在打标签时触发，如v1.0.0
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.1'  # 指定Flutter版本
+      
+      - name: Enable Windows desktop support
+        run: flutter config --enable-windows-desktop
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Build Windows release
+        run: flutter build windows --release
+      
+      - name: Package as zip
+        run: |
+          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath flutter_windows_app.zip
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: flutter_windows_app.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
