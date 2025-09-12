@@ -4,7 +4,9 @@ on:
   push:
     tags:
       - 'v*'  # 只在打标签时触发，如v1.0.0
-
+permissions:
+  contents: write
+  
 jobs:
   build-windows:
     runs-on: windows-latest
