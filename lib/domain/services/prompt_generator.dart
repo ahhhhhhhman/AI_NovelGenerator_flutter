@@ -1,5 +1,4 @@
 import '../../utils/config_service.dart';
-import 'dart:io' show Platform;
 
 class PromptGenerator {
   /// 生成核心种子设定提示
@@ -298,6 +297,88 @@ $novelArchitectureText
 - 不要使用markdown格式。
 
 额外指导(可能未指定)：$userGuidance''';
+  }
+
+  /// 生成后续章节草稿提示
+  String generateNextChapterDraftPrompt({
+    required String globalSummary,
+    required String previousChapterExcerpt,
+    required String userGuidance,
+    required String characterState,
+    required String shortSummary,
+    required int novelNumber,
+    required String chapterTitle,
+    required String chapterRole,
+    required String chapterPurpose,
+    required String suspenseLevel,
+    required String foreshadowing,
+    required String plotTwistLevel,
+    required String chapterSummary,
+    required int wordNumber,
+    required String charactersInvolved,
+    required String keyItems,
+    required String sceneLocation,
+    required String timeConstraint,
+    required int nextChapterNumber,
+    required String nextChapterTitle,
+    required String nextChapterRole,
+    required String nextChapterPurpose,
+    required String nextChapterSuspenseLevel,
+    required String nextChapterForeshadowing,
+    required String nextChapterPlotTwistLevel,
+    required String nextChapterSummary,
+  }) {
+    return '''参考文档：
+└── 前文摘要：
+    $globalSummary
+
+└── 前章结尾段：
+    $previousChapterExcerpt
+
+└── 用户指导：
+    $userGuidance
+
+└── 角色状态：
+    $characterState
+
+└── 当前章节摘要：
+    $shortSummary
+
+当前章节信息：
+第$novelNumber章《$chapterTitle》：
+├── 章节定位：$chapterRole
+├── 核心作用：$chapterPurpose
+├── 悬念密度：$suspenseLevel
+├── 伏笔设计：$foreshadowing
+├── 转折程度：$plotTwistLevel
+├── 章节简述：$chapterSummary
+├── 字数要求：$wordNumber字
+├── 核心人物：$charactersInvolved
+├── 关键道具：$keyItems
+├── 场景地点：$sceneLocation
+└── 时间压力：$timeConstraint
+
+下一章节目录
+第$nextChapterNumber章《$nextChapterTitle》：
+├── 章节定位：$nextChapterRole
+├── 核心作用：$nextChapterPurpose
+├── 悬念密度：$nextChapterSuspenseLevel
+├── 伏笔设计：$nextChapterForeshadowing
+├── 转折程度：$nextChapterPlotTwistLevel
+└── 章节简述：$nextChapterSummary
+
+依据前面所有设定，开始完成第 $novelNumber 章的正文，字数要求$wordNumber字，
+内容生成严格遵循：
+-用户指导
+-当前章节摘要
+-当前章节信息
+-无逻辑漏洞,
+确保章节内容与前文摘要、前章结尾段衔接流畅、下一章目录保证上下文完整性，
+
+格式要求：
+- 仅返回章节正文文本；
+- 不使用分章节小标题；
+- 不要使用markdown格式。''';
   }
 
   /// 获取配置参数
