@@ -476,12 +476,43 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   // 3. 调用LLM服务获取摘要
                   String shortSummary;
                   try {
+                    // 显示加载指示器
+                    if (mounted) {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const CircularProgressIndicator(),
+                                const SizedBox(height: 20),
+                                Text(AppLocalizations.of(context).translate('calling_llm')),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
+                    
                     shortSummary = await LLMService().callLLM(shortSummaryPrompt, selectedLLMConfig);
+                    
+                    // 隐藏加载指示器
+                    if (mounted) {
+                      Navigator.of(context).pop();
+                    }
+                    
                     // 移除可能的前缀 "当前章节摘要: "
                     if (shortSummary.startsWith('当前章节摘要:')) {
                       shortSummary = shortSummary.substring('当前章节摘要:'.length).trim();
                     }
                   } catch (e) {
+                    // 隐藏加载指示器
+                    if (mounted) {
+                      Navigator.of(context).pop();
+                    }
+                    
                     LoggerService().logError('Failed to generate short summary: $e');
                     shortSummary = '这里应该是通过LLM生成的当前章节摘要'; // Fallback
                   }

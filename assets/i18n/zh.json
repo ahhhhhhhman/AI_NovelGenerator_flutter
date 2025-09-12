@@ -136,5 +136,6 @@
   "chapter_number_required": "章节号不能为空",
   "chapter_number_must_be_positive": "章节号必须大于0",
   "word_count_must_be_positive": "期望字数必须大于0",
-  "chapter_generation_not_implemented": "章节生成功能尚未实现"
+  "chapter_generation_not_implemented": "章节生成功能尚未实现",
+  "calling_llm": "正在调用大模型生成内容..."
 }

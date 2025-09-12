@@ -136,5 +136,6 @@
   "chapter_number_required": "Chapter number cannot be empty",
   "chapter_number_must_be_positive": "Chapter number must be greater than 0",
   "word_count_must_be_positive": "Expected word count must be greater than 0",
-  "chapter_generation_not_implemented": "Chapter generation feature not implemented yet"
+  "chapter_generation_not_implemented": "Chapter generation feature not implemented yet",
+  "calling_llm": "Calling large model to generate content..."
 }
