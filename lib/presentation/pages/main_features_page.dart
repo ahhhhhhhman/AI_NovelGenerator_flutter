@@ -1,8 +1,10 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/localizations/app_localizations.dart';
 import '../../data/datasources/local/novel_file_service.dart';
 import '../pages/novel_architecture_page.dart'; // 导入 SelectedNovelProvider
+import '../../domain/services/prompt_generator.dart'; // 导入 PromptGenerator
 
 class MainFeaturesPage extends StatefulWidget {
   const MainFeaturesPage({super.key});
@@ -22,7 +24,8 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
       TextEditingController();
   final TextEditingController _keyItemsController = TextEditingController();
   final TextEditingController _timePressureController = TextEditingController();
-  final TextEditingController _spatialCoordinatesController = TextEditingController();
+  final TextEditingController _spatialCoordinatesController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -89,7 +92,9 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   child: TextField(
                     controller: _chapterNumberController,
                     decoration: InputDecoration(
-                      labelText: dialogLocalizations.translate('chapter_number'),
+                      labelText: dialogLocalizations.translate(
+                        'chapter_number',
+                      ),
                     ),
                     keyboardType: TextInputType.number,
                   ),
@@ -126,7 +131,9 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   child: TextField(
                     controller: _coreCharactersController,
                     decoration: InputDecoration(
-                      labelText: dialogLocalizations.translate('core_characters'),
+                      labelText: dialogLocalizations.translate(
+                        'core_characters',
+                      ),
                     ),
                   ),
                 ),
@@ -156,7 +163,9 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   child: TextField(
                     controller: _spatialCoordinatesController,
                     decoration: InputDecoration(
-                      labelText: dialogLocalizations.translate('spatial_coordinates'),
+                      labelText: dialogLocalizations.translate(
+                        'spatial_coordinates',
+                      ),
                     ),
                   ),
                 ),
@@ -223,19 +232,108 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                 // 关闭对话框
                 dialogNavigator.pop();
 
-                // TODO: 实现生成章节的逻辑
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        AppLocalizations.of(
-                          context,
-                        ).translate('chapter_generation_not_implemented'),
+                // 实现生成章节的逻辑
+                if (chapterNumber == 1) {
+                  // 如果是第一章，使用特定的提示词并弹出编辑框
+                  final promptGenerator = PromptGenerator();
+                  final prompt = promptGenerator
+                      .generateFirstChapterDraftPrompt(
+                        novelNumber: chapterNumber,
+                        chapterTitle: '第一章标题', // 这里应该从用户输入或其他地方获取
+                        chapterRole: '开篇', // 这里应该从用户输入或其他地方获取
+                        chapterPurpose: '引入故事背景和主要角色', // 这里应该从用户输入或其他地方获取
+                        suspenseLevel: '渐进', // 这里应该从用户输入或其他地方获取
+                        foreshadowing: '埋设主要线索A', // 这里应该从用户输入或其他地方获取
+                        plotTwistLevel: '★☆☆☆☆', // 这里应该从用户输入或其他地方获取
+                        chapterSummary: '简要描述第一章的内容', // 这里应该从用户输入或其他地方获取
+                        charactersInvolved: _coreCharactersController.text,
+                        keyItems: _keyItemsController.text,
+                        sceneLocation: _spatialCoordinatesController.text,
+                        timeConstraint: _timePressureController.text,
+                        novelArchitectureText: '这里应该是完整的小说架构文本', // 这里应该从实际数据中获取
+                        wordNumber: wordCount,
+                        userGuidance: _contentGuidanceController.text,
+                      );
+
+                  // 弹出编辑框让用户编辑提示词
+                  _showEditPromptDialog(prompt, (editedPrompt) {
+                    // 后续逻辑暂时占位
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(
+                              context,
+                            ).translate('first_chapter_prompt_edited'),
+                          ),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  });
+                } else {
+                  // 其他章节的逻辑暂时占位
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(
+                            context,
+                          ).translate('chapter_generation_not_implemented'),
+                        ),
+                        backgroundColor: Colors.blue,
                       ),
-                      backgroundColor: Colors.blue,
-                    ),
-                  );
+                    );
+                  }
                 }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// 显示编辑提示词对话框
+  Future<void> _showEditPromptDialog(
+    String initialPrompt,
+    Function(String) onPromptEdited,
+  ) async {
+    final TextEditingController promptController = TextEditingController(
+      text: initialPrompt,
+    );
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        final dialogLocalizations = AppLocalizations.of(dialogContext);
+        final dialogNavigator = Navigator.of(dialogContext);
+
+        return AlertDialog(
+          title: Text(dialogLocalizations.translate('edit_prompt')),
+          content: SingleChildScrollView(
+            child: TextField(
+              controller: promptController,
+              maxLines: 15,
+              decoration: InputDecoration(
+                hintText: dialogLocalizations.translate('enter_prompt_here'),
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(dialogLocalizations.translate('cancel')),
+              onPressed: () {
+                dialogNavigator.pop();
+              },
+            ),
+            TextButton(
+              child: Text(dialogLocalizations.translate('save')),
+              onPressed: () {
+                // 保存编辑后的提示词并调用回调函数
+                onPromptEdited(promptController.text);
+                dialogNavigator.pop();
               },
             ),
           ],

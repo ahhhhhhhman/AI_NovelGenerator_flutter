@@ -1,4 +1,5 @@
 import '../../utils/config_service.dart';
+import 'dart:io' show Platform;
 
 class PromptGenerator {
   /// 生成核心种子设定提示
@@ -233,6 +234,70 @@ $chapterList
 
 每个阶段需包含3个关键转折点及其对应的伏笔回收方案。
 仅给出最终文本，不要解释任何内容。''';
+  }
+
+  /// 生成第一章草稿提示
+  String generateFirstChapterDraftPrompt({
+    required int novelNumber,
+    required String chapterTitle,
+    required String chapterRole,
+    required String chapterPurpose,
+    required String suspenseLevel,
+    required String foreshadowing,
+    required String plotTwistLevel,
+    required String chapterSummary,
+    required String charactersInvolved,
+    required String keyItems,
+    required String sceneLocation,
+    required String timeConstraint,
+    required String novelArchitectureText,
+    required int wordNumber,
+    required String userGuidance,
+  }) {
+    return '''即将创作：第 $novelNumber 章《$chapterTitle》
+本章定位：$chapterRole
+核心作用：$chapterPurpose
+悬念密度：$suspenseLevel
+伏笔操作：$foreshadowing
+认知颠覆：$plotTwistLevel
+本章简述：$chapterSummary
+
+可用元素：
+- 核心人物(可能未指定)：$charactersInvolved
+- 关键道具(可能未指定)：$keyItems
+- 空间坐标(可能未指定)：$sceneLocation
+- 时间压力(可能未指定)：$timeConstraint
+
+参考文档：
+- 小说设定：
+$novelArchitectureText
+
+完成第 $novelNumber 章的正文，字数要求$wordNumber字，至少设计下方2个或以上具有动态张力的场景：
+1. 对话场景：
+   - 潜台词冲突（表面谈论A，实际博弈B）
+   - 权力关系变化（通过非对称对话长度体现）
+
+2. 动作场景：
+   - 环境交互细节（至少3个感官描写）
+   - 节奏控制（短句加速+比喻减速）
+   - 动作揭示人物隐藏特质
+
+3. 心理场景：
+   - 认知失调的具体表现（行为矛盾）
+   - 隐喻系统的运用（连接世界观符号）
+   - 决策前的价值天平描写
+
+4. 环境场景：
+   - 空间透视变化（宏观→微观→异常焦点）
+   - 非常规感官组合（如"听见阳光的重量"）
+   - 动态环境反映心理（环境与人物心理对应）
+
+格式要求：
+- 仅返回章节正文文本；
+- 不使用分章节小标题；
+- 不要使用markdown格式。
+
+额外指导(可能未指定)：$userGuidance''';
   }
 
   /// 获取配置参数

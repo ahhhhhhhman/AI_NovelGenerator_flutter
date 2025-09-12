@@ -13,4 +13,10 @@ class PromptService {
     // This is a placeholder implementation
     return 'Generate chapter $chapterNumber based on: ${context.toString()}';
   }
+  
+  String generateFirstChapterPrompt(Map<String, dynamic> context) {
+    // Generate prompt for first chapter
+    // This is a placeholder implementation
+    return 'Generate first chapter based on: ${context.toString()}';
+  }
 }
