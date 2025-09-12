@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../app/localizations/app_localizations.dart';
 import '../../utils/config_service.dart';
+import '../../domain/usecases/llm_usecase.dart';
 
 class LargeModelSettingsPage extends StatefulWidget {
   const LargeModelSettingsPage({super.key});
@@ -299,6 +300,53 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
     );
   }
 
+  /// 测试LLM配置
+  Future<void> _testLLMConfig(String configName) async {
+    if (!mounted) return;
+    final localizations = AppLocalizations.of(context);
+    
+    // 显示测试中提示
+    if (!mounted) return;
+    final snackBar = SnackBar(
+      content: Text(localizations.translate('testing_config')),
+      duration: const Duration(seconds: 10),
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    
+    try {
+      // 导入LLM使用案例
+      final llmUseCase = LLMUseCase();
+      
+      // 发送测试请求
+      await llmUseCase.generateText('test', configName);
+      
+      if (!mounted) return;
+      // 显示成功消息
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizations.translate('test_successful')),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      // 显示错误消息
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${localizations.translate('test_failed')}: $e'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   /// 构建配置列表项
   Widget _buildConfigListItem(
     String configType,
@@ -324,6 +372,13 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // 只对LLM配置显示测试按钮
+                    if (configType == 'llm_configs')
+                      IconButton(
+                        icon: const Icon(Icons.play_arrow),
+                        onPressed: () => _testLLMConfig(configName),
+                        tooltip: localizations.translate('test'),
+                      ),
                     IconButton(
                       icon: const Icon(Icons.edit),
                       onPressed: () => _showConfigDialog(

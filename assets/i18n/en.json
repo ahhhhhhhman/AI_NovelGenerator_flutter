@@ -102,5 +102,9 @@
   "unsaved_changes_message": "You have unsaved changes. Do you want to save them?",
   "save_successful": "Save successful",
   "save_failed": "Save failed",
-  "saving": "Saving..."
+  "saving": "Saving...",
+  "test": "Test",
+  "testing_config": "Testing configuration...",
+  "test_successful": "Test successful",
+  "test_failed": "Test failed"
 }
