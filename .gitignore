@@ -49,3 +49,5 @@ assets/config/config.json
 # Log files
 /logs/
 
+prompt_definitions.py
+/novels/
