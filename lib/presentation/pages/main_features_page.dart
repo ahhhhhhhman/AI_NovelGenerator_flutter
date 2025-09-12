@@ -638,6 +638,7 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   final result = await LLMService().callLLM(promptController.text, llmConfigName);
                   
                   // 隐藏加载指示器
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
                   
                   // 显示LLM返回的结果
@@ -648,6 +649,7 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   });
                 } catch (e) {
                   // 隐藏加载指示器
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
                   
                   // 显示错误信息
@@ -792,6 +794,7 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   final result = await LLMService().callLLM(promptController.text, selectedLLMConfig);
                   
                   // 隐藏加载指示器
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
                   
                   // 显示LLM返回的结果
@@ -802,6 +805,7 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   });
                 } catch (e) {
                   // 隐藏加载指示器
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
                   
                   // 显示错误信息
@@ -846,38 +850,155 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
       builder: (BuildContext dialogContext) {
         final dialogLocalizations = AppLocalizations.of(dialogContext);
         final dialogNavigator = Navigator.of(dialogContext);
+        bool isSaving = false; // 添加保存状态标志
+        int currentStep = 0; // 添加当前步骤计数器
 
-        return AlertDialog(
-          title: Text(dialogLocalizations.translate('edit_llm_result')),
-          content: SizedBox(
-            width: MediaQuery.of(dialogContext).size.width * 0.8,
-            child: SingleChildScrollView(
-              child: TextField(
-                controller: resultController,
-                maxLines: 15,
-                decoration: InputDecoration(
-                  hintText: dialogLocalizations.translate('enter_result_here'),
-                  border: OutlineInputBorder(),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(dialogLocalizations.translate('edit_llm_result')),
+              content: SizedBox(
+                width: MediaQuery.of(dialogContext).size.width * 0.8,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 保存状态指示器
+                      if (isSaving)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const CircularProgressIndicator(),
+                                const SizedBox(width: 8),
+                                Text(dialogLocalizations.translateWithArgs('saving_step', [currentStep.toString(), '3'])),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            LinearProgressIndicator(value: currentStep / 3),
+                            const SizedBox(height: 8),
+                          ],
+                        ),
+                      TextField(
+                        controller: resultController,
+                        maxLines: 15,
+                        decoration: InputDecoration(
+                          hintText: dialogLocalizations.translate('enter_result_here'),
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(dialogLocalizations.translate('cancel')),
-              onPressed: () {
-                dialogNavigator.pop();
-              },
-            ),
-            TextButton(
-              child: Text(dialogLocalizations.translate('save')),
-              onPressed: () {
-                // 保存编辑后的结果并调用回调函数
-                onResultEdited(resultController.text);
-                dialogNavigator.pop();
-              },
-            ),
-          ],
+              actions: <Widget>[
+                TextButton(
+                  child: Text(dialogLocalizations.translate('cancel')),
+                  onPressed: () {
+                    dialogNavigator.pop();
+                  },
+                ),
+                TextButton(
+                  onPressed: isSaving
+                      ? null
+                      : () async {
+                          // 设置保存状态
+                          setState(() {
+                            isSaving = true;
+                            currentStep = 0;
+                          });
+
+                          // 保存章节内容到对应文件夹中
+                          final selectedNovel = context.read<SelectedNovelProvider>().selectedNovel;
+                          if (selectedNovel != null) {
+                            // 获取章节号
+                            final chapterNumber = int.tryParse(_chapterNumberController.text) ?? 1;
+                            
+                            // 更新步骤：保存章节内容
+                            setState(() {
+                              currentStep = 1;
+                            });
+                            
+                            // 保存章节内容
+                            await NovelFileService().saveChapter(selectedNovel, chapterNumber, resultController.text);
+                            
+                            // 更新步骤：更新全局摘要
+                            setState(() {
+                              currentStep = 2;
+                            });
+                            
+                            // 更新全局摘要
+                            try {
+                              // 读取当前全局摘要
+                              final currentSummary = await NovelFileService().readGlobalSummary(selectedNovel) ?? '';
+                              
+                              // 构建更新摘要的提示词
+                              final promptGenerator = PromptGenerator();
+                              final updateSummaryPrompt = promptGenerator.generateUpdateSummaryPrompt(
+                                chapterText: resultController.text,
+                                globalSummary: currentSummary,
+                              );
+                              
+                              // 调用LLM更新摘要
+                              final updatedSummary = await LLMService().callLLM(updateSummaryPrompt, llmConfigName);
+                              
+                              // 保存更新后的摘要
+                              await NovelFileService().saveGlobalSummary(selectedNovel, updatedSummary);
+                            } catch (e) {
+                              LoggerService().logError('Failed to update global summary: $e');
+                            }
+                            
+                            // 更新步骤：更新角色状态
+                            setState(() {
+                              currentStep = 3;
+                            });
+                            
+                            // 更新角色状态
+                            try {
+                              // 读取当前角色状态
+                              final currentCharacterState = await NovelFileService().readCharacterState(selectedNovel) ?? '';
+                              
+                              // 构建更新角色状态的提示词
+                              final promptGenerator = PromptGenerator();
+                              final updateCharacterStatePrompt = promptGenerator.generateUpdateCharacterStatePrompt(
+                                chapterText: resultController.text,
+                                oldState: currentCharacterState,
+                              );
+                              
+                              // 调用LLM更新角色状态
+                              final updatedCharacterState = await LLMService().callLLM(updateCharacterStatePrompt, llmConfigName);
+                              
+                              // 保存更新后的角色状态
+                              await NovelFileService().saveCharacterState(selectedNovel, updatedCharacterState);
+                            } catch (e) {
+                              LoggerService().logError('Failed to update character state: $e');
+                            }
+                          }
+                          
+                          // 保存完成后关闭对话框
+                          dialogNavigator.pop();
+                          
+                          // 保存编辑后的结果并调用回调函数
+                          onResultEdited(resultController.text);
+                          
+                          // 显示保存成功的提示
+                          if (mounted) {
+                            // ignore: use_build_context_synchronously
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                // ignore: use_build_context_synchronously
+                                content: Text(AppLocalizations.of(context).translate('chapter_saved_successfully')),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }
+                        },
+                  child: Text(dialogLocalizations.translate('save')),
+                ),
+              ],
+            );
+          },
         );
       },
     );

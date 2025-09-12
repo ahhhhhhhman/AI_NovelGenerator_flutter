@@ -111,6 +111,7 @@
   "generate_blueprint": "Generate Blueprint",
   "generating": "Generating...",
   "generating_step": "Generating step {1} of {2}",
+  "saving_step": "Saving step {1} of {2}",
   "topic": "Topic",
   "genre": "Genre",
   "number_of_chapters": "Number of Chapters",
@@ -146,5 +147,6 @@
   "send_to_llm": "Send to LLM",
   "llm_call_failed": "LLM call failed",
   "first_chapter_prompt_edited": "First chapter prompt edited",
-  "next_chapter_prompt_edited": "Next chapter prompt edited"
+  "next_chapter_prompt_edited": "Next chapter prompt edited",
+  "chapter_saved_successfully": "Chapter saved successfully"
 }

@@ -111,6 +111,7 @@
   "generate_blueprint": "生成蓝图",
   "generating": "生成中...",
   "generating_step": "正在生成第{1}步，共{2}步",
+  "saving_step": "正在保存第{1}步，共{2}步",
   "topic": "主题",
   "genre": "类型",
   "number_of_chapters": "章节数",
@@ -146,5 +147,6 @@
   "send_to_llm": "发送到LLM",
   "llm_call_failed": "调用LLM失败",
   "first_chapter_prompt_edited": "第一章提示词已编辑",
-  "next_chapter_prompt_edited": "后续章节提示词已编辑"
+  "next_chapter_prompt_edited": "后续章节提示词已编辑",
+  "chapter_saved_successfully": "章节已成功保存"
 }
