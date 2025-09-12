@@ -102,5 +102,9 @@
   "unsaved_changes_message": "您有未保存的更改。您想要保存更改吗？",
   "save_successful": "保存成功",
   "save_failed": "保存失败",
-  "saving": "保存中..."
+  "saving": "保存中...",
+  "test": "测试",
+  "testing_config": "正在测试配置...",
+  "test_successful": "测试成功",
+  "test_failed": "测试失败"
 }

@@ -12,6 +12,7 @@
 - 章节管理功能
 - 个性化设置
 - 多语言支持（中英文）
+- LLM大模型集成（支持OpenAI兼容接口）
 
 ## 界面预览
 
@@ -103,6 +104,50 @@ flutter run -d android
 2. **页面切换**：
    - 应用会根据导航栏的选择自动切换到对应页面
    - 页面标题会动态更新以反映当前所在的功能模块
+
+## LLM大模型集成
+
+本项目支持集成各种OpenAI兼容的大语言模型服务：
+
+### 配置说明
+
+在`assets/config/config.example.json`中可以找到LLM配置示例：
+
+```json
+"llm_configs": {
+    "DeepSeek V3": {
+        "api_key": "",
+        "base_url": "https://api.deepseek.com/v1",
+        "model_name": "deepseek-chat",
+        "temperature": 0.7,
+        "max_tokens": 8192,
+        "timeout": 600,
+        "interface_format": "OpenAI"
+    },
+    "GPT 5": {
+        "api_key": "",
+        "base_url": "https://api.openai.com/v1",
+        "model_name": "gpt-5",
+        "temperature": 0.7,
+        "max_tokens": 32768,
+        "timeout": 600,
+        "interface_format": "OpenAI"
+    }
+}
+```
+
+### 使用方法
+
+1. 复制`config.example.json`为`config.json`并填入你的API密钥
+2. 在应用中可以通过配置名称调用不同的LLM服务
+3. 系统支持超时重传等机制确保请求稳定性
+
+### 开发者API
+
+提供以下接口供开发者使用：
+
+- `LLMService.callLLM(prompt, configName)` - 调用指定配置的LLM
+- `LLMUseCase.generateText(prompt, configName)` - 生成文本的用例封装
 
 ## 国际化支持
 
