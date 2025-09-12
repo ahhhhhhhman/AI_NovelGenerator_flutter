@@ -117,28 +117,42 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
   }
 
   /// 显示配置编辑对话框
-  Future<void> _showConfigDialog(
-      {String? configType, String? configName, Map<String, dynamic>? configData}) async {
+  Future<void> _showConfigDialog({
+    String? configType,
+    String? configName,
+    Map<String, dynamic>? configData,
+  }) async {
     final localizations = AppLocalizations.of(context);
 
     // 控制器用于表单输入
     final nameController = TextEditingController(text: configName);
-    final apiKeyController = TextEditingController(text: configData?['api_key'] ?? '');
-    final baseUrlController = TextEditingController(text: configData?['base_url'] ?? '');
-    final modelNameController = TextEditingController(text: configData?['model_name'] ?? '');
-    final temperatureController =
-        TextEditingController(text: (configData?['temperature'] ?? 0.7).toString());
-    final maxTokensController =
-        TextEditingController(text: (configData?['max_tokens'] ?? 8192).toString());
-    final timeoutController =
-        TextEditingController(text: (configData?['timeout'] ?? 600).toString());
-    
+    final apiKeyController = TextEditingController(
+      text: configData?['api_key'] ?? '',
+    );
+    final baseUrlController = TextEditingController(
+      text: configData?['base_url'] ?? '',
+    );
+    final modelNameController = TextEditingController(
+      text: configData?['model_name'] ?? '',
+    );
+    final temperatureController = TextEditingController(
+      text: (configData?['temperature'] ?? 0.7).toString(),
+    );
+    final maxTokensController = TextEditingController(
+      text: (configData?['max_tokens'] ?? 8192).toString(),
+    );
+    final timeoutController = TextEditingController(
+      text: (configData?['timeout'] ?? 600).toString(),
+    );
+
     // 接口格式下拉框的当前值
-    String selectedInterfaceFormat = configData?['interface_format'] ?? 'OpenAI';
+    String selectedInterfaceFormat =
+        configData?['interface_format'] ?? 'OpenAI';
 
     // 对于嵌入配置，还有一些额外的字段
-    final retrievalKController =
-        TextEditingController(text: (configData?['retrieval_k'] ?? 4).toString());
+    final retrievalKController = TextEditingController(
+      text: (configData?['retrieval_k'] ?? 4).toString(),
+    );
 
     await showDialog<void>(
       context: context,
@@ -146,9 +160,13 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(configName == null
-                  ? localizations.translate('add_new_config')
-                  : localizations.translateWithArgs('edit_config', [configName])),
+              title: Text(
+                configName == null
+                    ? localizations.translate('add_new_config')
+                    : localizations.translateWithArgs('edit_config', [
+                        configName,
+                      ]),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -287,7 +305,11 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
                     }
 
                     // 保存配置
-                    await _saveConfig(configType!, nameController.text, newConfigData);
+                    await _saveConfig(
+                      configType!,
+                      nameController.text,
+                      newConfigData,
+                    );
                     if (context.mounted) {
                       Navigator.of(context).pop();
                     }
@@ -305,7 +327,7 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
   Future<void> _testLLMConfig(String configName) async {
     if (!mounted) return;
     final localizations = AppLocalizations.of(context);
-    
+
     // 显示测试中提示
     if (!mounted) return;
     final snackBar = SnackBar(
@@ -314,14 +336,14 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
       behavior: SnackBarBehavior.floating,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    
+
     try {
       // 导入LLM使用案例
       final llmUseCase = LLMUseCase();
-      
+
       // 发送测试请求
       await llmUseCase.generateText('test', configName);
-      
+
       if (!mounted) return;
       // 显示成功消息
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -352,7 +374,7 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
   Future<void> _testEmbeddingConfig(String configName) async {
     if (!mounted) return;
     final localizations = AppLocalizations.of(context);
-    
+
     // 显示测试中提示
     if (!mounted) return;
     final snackBar = SnackBar(
@@ -361,14 +383,14 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
       behavior: SnackBarBehavior.floating,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    
+
     try {
       // 导入嵌入模型使用案例
       final embeddingUseCase = EmbeddingUseCase();
-      
+
       // 发送测试请求
       await embeddingUseCase.generateEmbedding('test', configName);
-      
+
       if (!mounted) return;
       // 显示成功消息
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
