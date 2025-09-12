@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../app/localizations/app_localizations.dart';
 import '../../utils/config_service.dart';
 import '../../domain/usecases/llm_usecase.dart';
+import '../../domain/usecases/embedding_usecase.dart';
 
 class LargeModelSettingsPage extends StatefulWidget {
   const LargeModelSettingsPage({super.key});
@@ -347,6 +348,53 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
     }
   }
 
+  /// 测试嵌入模型配置
+  Future<void> _testEmbeddingConfig(String configName) async {
+    if (!mounted) return;
+    final localizations = AppLocalizations.of(context);
+    
+    // 显示测试中提示
+    if (!mounted) return;
+    final snackBar = SnackBar(
+      content: Text(localizations.translate('testing_config')),
+      duration: const Duration(seconds: 10),
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    
+    try {
+      // 导入嵌入模型使用案例
+      final embeddingUseCase = EmbeddingUseCase();
+      
+      // 发送测试请求
+      await embeddingUseCase.generateEmbedding('test', configName);
+      
+      if (!mounted) return;
+      // 显示成功消息
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizations.translate('test_successful')),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      // 显示错误消息
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${localizations.translate('test_failed')}: $e'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   /// 构建配置列表项
   Widget _buildConfigListItem(
     String configType,
@@ -372,11 +420,17 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // 只对LLM配置显示测试按钮
+                    // 为LLM配置和嵌入模型配置显示测试按钮
                     if (configType == 'llm_configs')
                       IconButton(
                         icon: const Icon(Icons.play_arrow),
                         onPressed: () => _testLLMConfig(configName),
+                        tooltip: localizations.translate('test'),
+                      )
+                    else if (configType == 'embedding_configs')
+                      IconButton(
+                        icon: const Icon(Icons.play_arrow),
+                        onPressed: () => _testEmbeddingConfig(configName),
                         tooltip: localizations.translate('test'),
                       ),
                     IconButton(
@@ -407,6 +461,12 @@ class _LargeModelSettingsPageState extends State<LargeModelSettingsPage> {
             Text(
               '${localizations.translate('api_key_label')}: ${configData['api_key'] != null && configData['api_key'].toString().isNotEmpty ? '********' : localizations.translate('not_set')}',
             ),
+            // 对于嵌入模型，显示额外字段
+            if (configType == 'embedding_configs') ...[
+              Text(
+                '${localizations.translate('retrieval_k')}: ${configData['retrieval_k'] ?? 4}',
+              ),
+            ],
           ],
         ),
       ),
