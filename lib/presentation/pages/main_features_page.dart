@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../app/localizations/app_localizations.dart';
 import '../../data/datasources/local/novel_file_service.dart';
 import '../../utils/config_service.dart';
+import '../../domain/services/llm_service.dart'; // 导入 LLMService
+import '../../domain/services/logger_service.dart'; // 导入 LoggerService
 import '../pages/novel_architecture_page.dart'; // 导入 SelectedNovelProvider
 import '../../domain/services/prompt_generator.dart'; // 导入 PromptGenerator
 
@@ -419,12 +421,6 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   // 获取 character_state.txt 内容
                   final characterState = await NovelFileService().readCharacterState(novelFolderName) ?? '';
                   
-                  // 获取 short_summary (这里需要调用LLM来生成)
-                  // 为简化起见，这里暂时使用一个占位符
-                  // 实际应用中需要根据 prompt_definitions.py 的 11-59 行构建提示词并调用LLM
-                  // final shortSummaryPrompt = '''请基于已完成的前三章内容和本章信息生成当前章节的精准摘要。''';
-                  final shortSummary = '这里应该是通过LLM生成的当前章节摘要'; // await callLLM(shortSummaryPrompt);
-                  
                   // 获取当前章节信息
                   final chapterInfo = await _parseChapterInfoFromDirectory(novelFolderName, chapterNumber);
                   final chapterTitle = chapterInfo?['title'] ?? '第$chapterNumber章标题';
@@ -444,6 +440,51 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   final nextChapterForeshadowing = nextChapterInfo?['foreshadowing'] ?? '埋设线索C';
                   final nextChapterPlotTwistLevel = nextChapterInfo?['plot_twist_level'] ?? '★★☆☆☆';
                   final nextChapterSummary = nextChapterInfo?['summary'] ?? '简要描述第${chapterNumber + 1}章的内容';
+                  
+                  // 获取 short_summary (这里需要调用LLM来生成)
+                  // 1. 读取前三章内容
+                  String combinedText = '';
+                  for (int i = 1; i < chapterNumber && i <= 3; i++) {
+                    final chapterContent = await NovelFileService().readChapter(novelFolderName, i);
+                    if (chapterContent != null) {
+                      combinedText += '第$i章:\n$chapterContent\n\n';
+                    }
+                  }
+                  
+                  // 2. 构建提示词
+                  final promptGeneratorForShortSummary = PromptGenerator();
+                  final shortSummaryPrompt = promptGeneratorForShortSummary.generateShortSummaryPrompt(
+                    combinedText: combinedText,
+                    novelNumber: chapterNumber,
+                    chapterTitle: chapterTitle,
+                    chapterRole: chapterRole,
+                    chapterPurpose: chapterPurpose,
+                    suspenseLevel: suspenseLevel,
+                    foreshadowing: foreshadowing,
+                    plotTwistLevel: plotTwistLevel,
+                    chapterSummary: chapterSummary,
+                    nextChapterNumber: chapterNumber + 1,
+                    nextChapterTitle: nextChapterTitle,
+                    nextChapterRole: nextChapterRole,
+                    nextChapterPurpose: nextChapterPurpose,
+                    nextChapterSuspenseLevel: nextChapterSuspenseLevel,
+                    nextChapterForeshadowing: nextChapterForeshadowing,
+                    nextChapterPlotTwistLevel: nextChapterPlotTwistLevel,
+                    nextChapterSummary: nextChapterSummary,
+                  );
+                  
+                  // 3. 调用LLM服务获取摘要
+                  String shortSummary;
+                  try {
+                    shortSummary = await LLMService().callLLM(shortSummaryPrompt, selectedLLMConfig);
+                    // 移除可能的前缀 "当前章节摘要: "
+                    if (shortSummary.startsWith('当前章节摘要:')) {
+                      shortSummary = shortSummary.substring('当前章节摘要:'.length).trim();
+                    }
+                  } catch (e) {
+                    LoggerService().logError('Failed to generate short summary: $e');
+                    shortSummary = '这里应该是通过LLM生成的当前章节摘要'; // Fallback
+                  }
                   
                   // 构建后续章节提示词
                   final promptGenerator = PromptGenerator();

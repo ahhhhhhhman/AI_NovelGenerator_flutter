@@ -381,6 +381,76 @@ $novelArchitectureText
 - 不要使用markdown格式。''';
   }
 
+  /// 生成当前章节摘要提示 (基于 prompt_definitions.py 的 11-59 行)
+  String generateShortSummaryPrompt({
+    required String combinedText, // 前三章内容
+    required int novelNumber, // 当前章节号
+    required String chapterTitle, // 当前章节标题
+    required String chapterRole, // 当前章节角色定位
+    required String chapterPurpose, // 当前章节核心作用
+    required String suspenseLevel, // 当前章节悬念密度
+    required String foreshadowing, // 当前章节伏笔操作
+    required String plotTwistLevel, // 当前章节认知颠覆
+    required String chapterSummary, // 当前章节简述
+    required int nextChapterNumber, // 下一章节号
+    required String nextChapterTitle, // 下一章节标题
+    required String nextChapterRole, // 下一章节角色定位
+    required String nextChapterPurpose, // 下一章节核心作用
+    required String nextChapterSuspenseLevel, // 下一章节悬念密度
+    required String nextChapterForeshadowing, // 下一章节伏笔操作
+    required String nextChapterPlotTwistLevel, // 下一章节认知颠覆
+    required String nextChapterSummary, // 下一章节简述
+  }) {
+    // 构建 prompt_definitions.py 中 summarize_recent_chapters_prompt 的内容
+    return '''作为一名专业的小说编辑和知识管理专家，正在基于已完成的前三章内容和本章信息生成当前章节的精准摘要。请严格遵循以下工作流程：
+前三章内容：
+$combinedText
+
+当前章节信息：
+第$novelNumber章《$chapterTitle》：
+├── 本章定位：$chapterRole
+├── 核心作用：$chapterPurpose
+├── 悬念密度：$suspenseLevel
+├── 伏笔操作：$foreshadowing
+├── 认知颠覆：$plotTwistLevel
+└── 本章简述：$chapterSummary
+
+下一章信息：
+第$nextChapterNumber章《$nextChapterTitle》：
+├── 本章定位：$nextChapterRole
+├── 核心作用：$nextChapterPurpose
+├── 悬念密度：$nextChapterSuspenseLevel
+├── 伏笔操作：$nextChapterForeshadowing
+├── 认知颠覆：$nextChapterPlotTwistLevel
+└── 本章简述：$nextChapterSummary
+
+**上下文分析阶段**：
+1. 回顾前三章核心内容：
+   - 第一章核心要素：[章节标题]→[核心冲突/理论]→[关键人物/概念]
+   - 第二章发展路径：[已建立的人物关系]→[技术/情节进展]→[遗留伏笔]
+   - 第三章转折点：[新出现的变量]→[世界观扩展]→[待解决问题]
+2. 提取延续性要素：
+   - 必继承要素：列出前3章中必须延续的3个核心设定
+   - 可调整要素：识别2个允许适度变化的辅助设定
+
+**当前章节摘要生成规则**：
+1. 内容架构：
+   - 继承权重：70%内容需与前3章形成逻辑递进
+   - 创新空间：30%内容可引入新要素，但需标注创新类型（如：技术突破/人物黑化）
+2. 结构控制：
+   - 采用"承继→发展→铺垫"三段式结构
+   - 每段含1个前文呼应点+1个新进展
+3. 预警机制：
+   - 若检测到与前3章设定冲突，用[!]标记并说明
+   - 对开放式发展路径，提供2种合理演化方向
+
+现在请你基于目前故事的进展，完成以下两件事：
+用最多800字，写一个简洁明了的「当前章节摘要」；
+
+请按如下格式输出（不需要额外解释）：
+当前章节摘要: <这里写当前章节摘要>''';
+  }
+
   /// 获取配置参数
   Map<String, dynamic> getOtherParams() {
     final config = ConfigService().getAll();
