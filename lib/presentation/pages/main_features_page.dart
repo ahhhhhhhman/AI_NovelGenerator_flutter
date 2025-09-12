@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/localizations/app_localizations.dart';
@@ -63,6 +64,69 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
           _chapterNumberController.text = '1';
         });
       }
+    }
+  }
+
+  /// 从 Novel_directory.txt 中解析章节信息
+  Future<Map<String, String>?> _parseChapterInfoFromDirectory(
+      String novelFolderName, int chapterNumber) async {
+    try {
+      final directoryContent =
+          await NovelFileService().readDirectory(novelFolderName);
+      if (directoryContent == null || directoryContent.isEmpty) {
+        return null;
+      }
+
+      // 解析 Novel_directory.txt 的内容
+      // 假设格式为:
+      // 第n章 - [标题]
+      // 本章定位：[角色/事件/主题/...]
+      // 核心作用：[推进/转折/揭示/...]
+      // 悬念密度：[紧凑/渐进/爆发/...]
+      // 伏笔操作：埋设(A线索)→强化(B矛盾)...
+      // 认知颠覆：★☆☆☆☆
+      // 本章简述：[一句话概括]
+      //
+      final lines = LineSplitter().convert(directoryContent);
+      for (int i = 0; i < lines.length; i++) {
+        final line = lines[i].trim();
+        if (line.startsWith('第$chapterNumber章 - ')) {
+          final info = <String, String>{};
+          
+          // 提取标题
+          info['title'] = line.substring('第$chapterNumber章 - '.length);
+          
+          // 继续解析后续行，直到遇到下一个章节或文件结尾
+          for (int j = i + 1; j < lines.length; j++) {
+            final nextLine = lines[j].trim();
+            // 如果遇到下一个章节标题，则停止解析
+            if (nextLine.startsWith('第') && nextLine.contains('章 - ')) {
+              break;
+            }
+            
+            // 解析各个字段
+            if (nextLine.startsWith('本章定位：')) {
+              info['role'] = nextLine.substring('本章定位：'.length);
+            } else if (nextLine.startsWith('核心作用：')) {
+              info['purpose'] = nextLine.substring('核心作用：'.length);
+            } else if (nextLine.startsWith('悬念密度：')) {
+              info['suspense_level'] = nextLine.substring('悬念密度：'.length);
+            } else if (nextLine.startsWith('伏笔操作：')) {
+              info['foreshadowing'] = nextLine.substring('伏笔操作：'.length);
+            } else if (nextLine.startsWith('认知颠覆：')) {
+              info['plot_twist_level'] = nextLine.substring('认知颠覆：'.length);
+            } else if (nextLine.startsWith('本章简述：')) {
+              info['summary'] = nextLine.substring('本章简述：'.length);
+            }
+          }
+          
+          return info;
+        }
+      }
+      return null;
+    } catch (e) {
+      // 如果解析失败，返回null
+      return null;
     }
   }
 
@@ -284,23 +348,35 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
 
                 // 实现生成章节的逻辑
                 if (chapterNumber == 1) {
+                  // 获取第一章信息
+                  final chapterInfo = await _parseChapterInfoFromDirectory(novelFolderName, chapterNumber);
+                  final chapterTitle = chapterInfo?['title'] ?? '第一章标题';
+                  final chapterRole = chapterInfo?['role'] ?? '开篇';
+                  final chapterPurpose = chapterInfo?['purpose'] ?? '引入故事背景和主要角色';
+                  final suspenseLevel = chapterInfo?['suspense_level'] ?? '渐进';
+                  final foreshadowing = chapterInfo?['foreshadowing'] ?? '埋设主要线索A';
+                  final plotTwistLevel = chapterInfo?['plot_twist_level'] ?? '★☆☆☆☆';
+                  final chapterSummary = chapterInfo?['summary'] ?? '简要描述第一章的内容';
+                  
                   // 如果是第一章，使用特定的提示词并弹出编辑框
                   final promptGenerator = PromptGenerator();
+                  // 读取小说架构内容
+                  final novelArchitectureText = await NovelFileService().readArchitecture(novelFolderName) ?? '这里应该是完整的小说架构文本';
                   final prompt = promptGenerator
                       .generateFirstChapterDraftPrompt(
                         novelNumber: chapterNumber,
-                        chapterTitle: '第一章标题', // 这里应该从用户输入或其他地方获取
-                        chapterRole: '开篇', // 这里应该从用户输入或其他地方获取
-                        chapterPurpose: '引入故事背景和主要角色', // 这里应该从用户输入或其他地方获取
-                        suspenseLevel: '渐进', // 这里应该从用户输入或其他地方获取
-                        foreshadowing: '埋设主要线索A', // 这里应该从用户输入或其他地方获取
-                        plotTwistLevel: '★☆☆☆☆', // 这里应该从用户输入或其他地方获取
-                        chapterSummary: '简要描述第一章的内容', // 这里应该从用户输入或其他地方获取
+                        chapterTitle: chapterTitle,
+                        chapterRole: chapterRole,
+                        chapterPurpose: chapterPurpose,
+                        suspenseLevel: suspenseLevel,
+                        foreshadowing: foreshadowing,
+                        plotTwistLevel: plotTwistLevel,
+                        chapterSummary: chapterSummary,
                         charactersInvolved: _coreCharactersController.text,
                         keyItems: _keyItemsController.text,
                         sceneLocation: _spatialCoordinatesController.text,
                         timeConstraint: _timePressureController.text,
-                        novelArchitectureText: '这里应该是完整的小说架构文本', // 这里应该从实际数据中获取
+                        novelArchitectureText: novelArchitectureText,
                         wordNumber: wordCount,
                         userGuidance: _contentGuidanceController.text,
                       );
@@ -349,6 +425,26 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   // final shortSummaryPrompt = '''请基于已完成的前三章内容和本章信息生成当前章节的精准摘要。''';
                   final shortSummary = '这里应该是通过LLM生成的当前章节摘要'; // await callLLM(shortSummaryPrompt);
                   
+                  // 获取当前章节信息
+                  final chapterInfo = await _parseChapterInfoFromDirectory(novelFolderName, chapterNumber);
+                  final chapterTitle = chapterInfo?['title'] ?? '第$chapterNumber章标题';
+                  final chapterRole = chapterInfo?['role'] ?? '发展中段';
+                  final chapterPurpose = chapterInfo?['purpose'] ?? '推进主线剧情';
+                  final suspenseLevel = chapterInfo?['suspense_level'] ?? '渐进';
+                  final foreshadowing = chapterInfo?['foreshadowing'] ?? '强化线索B';
+                  final plotTwistLevel = chapterInfo?['plot_twist_level'] ?? '★☆☆☆☆';
+                  final chapterSummary = chapterInfo?['summary'] ?? '简要描述第$chapterNumber章的内容';
+                  
+                  // 获取下一章节信息
+                  final nextChapterInfo = await _parseChapterInfoFromDirectory(novelFolderName, chapterNumber + 1);
+                  final nextChapterTitle = nextChapterInfo?['title'] ?? '第${chapterNumber + 1}章标题';
+                  final nextChapterRole = nextChapterInfo?['role'] ?? '高潮铺垫';
+                  final nextChapterPurpose = nextChapterInfo?['purpose'] ?? '为高潮做准备';
+                  final nextChapterSuspenseLevel = nextChapterInfo?['suspense_level'] ?? '爆发';
+                  final nextChapterForeshadowing = nextChapterInfo?['foreshadowing'] ?? '埋设线索C';
+                  final nextChapterPlotTwistLevel = nextChapterInfo?['plot_twist_level'] ?? '★★☆☆☆';
+                  final nextChapterSummary = nextChapterInfo?['summary'] ?? '简要描述第${chapterNumber + 1}章的内容';
+                  
                   // 构建后续章节提示词
                   final promptGenerator = PromptGenerator();
                   final prompt = promptGenerator.generateNextChapterDraftPrompt(
@@ -358,26 +454,26 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                     characterState: characterState,
                     shortSummary: shortSummary,
                     novelNumber: chapterNumber,
-                    chapterTitle: '第$chapterNumber章标题', // 这里应该从用户输入或其他地方获取
-                    chapterRole: '发展中段', // 这里应该从用户输入或其他地方获取
-                    chapterPurpose: '推进主线剧情', // 这里应该从用户输入或其他地方获取
-                    suspenseLevel: '渐进', // 这里应该从用户输入或其他地方获取
-                    foreshadowing: '强化线索B', // 这里应该从用户输入或其他地方获取
-                    plotTwistLevel: '★☆☆☆☆', // 这里应该从用户输入或其他地方获取
-                    chapterSummary: '简要描述第$chapterNumber章的内容', // 这里应该从用户输入或其他地方获取
+                    chapterTitle: chapterTitle,
+                    chapterRole: chapterRole,
+                    chapterPurpose: chapterPurpose,
+                    suspenseLevel: suspenseLevel,
+                    foreshadowing: foreshadowing,
+                    plotTwistLevel: plotTwistLevel,
+                    chapterSummary: chapterSummary,
                     wordNumber: wordCount,
                     charactersInvolved: _coreCharactersController.text,
                     keyItems: _keyItemsController.text,
                     sceneLocation: _spatialCoordinatesController.text,
                     timeConstraint: _timePressureController.text,
                     nextChapterNumber: chapterNumber + 1,
-                    nextChapterTitle: '第${chapterNumber + 1}章标题', // 这里应该从用户输入或其他地方获取
-                    nextChapterRole: '高潮铺垫', // 这里应该从用户输入或其他地方获取
-                    nextChapterPurpose: '为高潮做准备', // 这里应该从用户输入或其他地方获取
-                    nextChapterSuspenseLevel: '爆发', // 这里应该从用户输入或其他地方获取
-                    nextChapterForeshadowing: '埋设线索C', // 这里应该从用户输入或其他地方获取
-                    nextChapterPlotTwistLevel: '★★☆☆☆', // 这里应该从用户输入或其他地方获取
-                    nextChapterSummary: '简要描述第${chapterNumber + 1}章的内容', // 这里应该从用户输入或其他地方获取
+                    nextChapterTitle: nextChapterTitle,
+                    nextChapterRole: nextChapterRole,
+                    nextChapterPurpose: nextChapterPurpose,
+                    nextChapterSuspenseLevel: nextChapterSuspenseLevel,
+                    nextChapterForeshadowing: nextChapterForeshadowing,
+                    nextChapterPlotTwistLevel: nextChapterPlotTwistLevel,
+                    nextChapterSummary: nextChapterSummary,
                   );
                   
                   // 弹出编辑框让用户编辑提示词
@@ -405,7 +501,7 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
     );
   }
 
-  /// 显示编辑提示词对话框 (第一章)
+  /// 显示编辑提示词对话框
   Future<void> _showEditPromptDialog(
     String initialPrompt,
     Function(String) onPromptEdited,
@@ -499,15 +595,10 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
         final dialogLocalizations = AppLocalizations.of(dialogContext);
         final dialogNavigator = Navigator.of(dialogContext);
 
-        double dialogWidth = MediaQuery.of(dialogContext).size.width * 0.8;
-        if (dialogWidth > 600) {
-          dialogWidth = 600; // 限制最大宽度
-        }
-
         return AlertDialog(
           title: Text(dialogLocalizations.translate('edit_prompt_and_select_llm')),
           content: SizedBox(
-            width: dialogWidth,
+            width: MediaQuery.of(dialogContext).size.width * 0.8,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
