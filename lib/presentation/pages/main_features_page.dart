@@ -384,7 +384,7 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                       );
 
                   // 弹出编辑框让用户编辑提示词
-                  _showEditPromptDialog(prompt, (editedPrompt) {
+                  _showEditPromptDialog(prompt, selectedLLMConfig, (editedPrompt) {
                     // 后续逻辑暂时占位
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -549,7 +549,7 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                   );
                   
                   // 弹出编辑框让用户编辑提示词
-                  _showEditPromptDialog(prompt, (editedPrompt) {
+                  _showEditPromptDialog(prompt, selectedLLMConfig, (editedPrompt) {
                     // 后续逻辑暂时占位
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -576,6 +576,7 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
   /// 显示编辑提示词对话框
   Future<void> _showEditPromptDialog(
     String initialPrompt,
+    String llmConfigName, // 添加LLM配置参数
     Function(String) onPromptEdited,
   ) async {
     final TextEditingController promptController = TextEditingController(
@@ -610,14 +611,65 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
                 dialogNavigator.pop();
               },
             ),
+            // 添加发送到LLM按钮
             TextButton(
-              child: Text(dialogLocalizations.translate('save')),
-              onPressed: () {
-                // 保存编辑后的提示词并调用回调函数
-                onPromptEdited(promptController.text);
-                dialogNavigator.pop();
+              child: Text(dialogLocalizations.translate('send_to_llm')),
+              onPressed: () async {
+                // 显示加载指示器
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CircularProgressIndicator(),
+                          const SizedBox(height: 20),
+                          Text(AppLocalizations.of(context).translate('calling_llm')),
+                        ],
+                      ),
+                    );
+                  },
+                );
+                
+                try {
+                  // 调用LLM服务获取结果
+                  final result = await LLMService().callLLM(promptController.text, llmConfigName);
+                  
+                  // 隐藏加载指示器
+                  Navigator.of(context).pop();
+                  
+                  // 显示LLM返回的结果
+                  _showEditResultDialog(result, llmConfigName, (editedResult) {
+                    // 保存编辑后的结果并调用回调函数
+                    onPromptEdited(editedResult);
+                    dialogNavigator.pop();
+                  });
+                } catch (e) {
+                  // 隐藏加载指示器
+                  Navigator.of(context).pop();
+                  
+                  // 显示错误信息
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${dialogLocalizations.translate('llm_call_failed')}: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               },
             ),
+            // TextButton(
+            //   child: Text(dialogLocalizations.translate('save')),
+            //   onPressed: () {
+            //     // 保存编辑后的提示词并调用回调函数
+            //     onPromptEdited(promptController.text);
+            //     dialogNavigator.pop();
+            //   },
+            // ),
           ],
         );
       },
@@ -715,11 +767,113 @@ class _MainFeaturesPageState extends State<MainFeaturesPage> {
               },
             ),
             TextButton(
+              child: Text(dialogLocalizations.translate('send_to_llm')),
+              onPressed: () async {
+                // 显示加载指示器
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CircularProgressIndicator(),
+                          const SizedBox(height: 20),
+                          Text(AppLocalizations.of(context).translate('calling_llm')),
+                        ],
+                      ),
+                    );
+                  },
+                );
+                
+                try {
+                  // 调用LLM服务获取结果
+                  final result = await LLMService().callLLM(promptController.text, selectedLLMConfig);
+                  
+                  // 隐藏加载指示器
+                  Navigator.of(context).pop();
+                  
+                  // 显示LLM返回的结果
+                  _showEditResultDialog(result, selectedLLMConfig, (editedResult) {
+                    // 保存编辑后的结果并调用回调函数
+                    onPromptEditedAndLLMSelected(editedResult, selectedLLMConfig);
+                    dialogNavigator.pop();
+                  });
+                } catch (e) {
+                  // 隐藏加载指示器
+                  Navigator.of(context).pop();
+                  
+                  // 显示错误信息
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${dialogLocalizations.translate('llm_call_failed')}: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+            ),
+            // TextButton(
+            //   child: Text(dialogLocalizations.translate('save')),
+            //   onPressed: () {
+            //     // 保存编辑后的提示词和选择的LLM配置并调用回调函数
+            //     // 由于DropdownButtonFormField的value属性需要在父组件中管理状态，这里我们直接使用selectedLLMConfig
+            //     onPromptEditedAndLLMSelected(promptController.text, selectedLLMConfig);
+            //     dialogNavigator.pop();
+            //   },
+            // ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// 显示编辑LLM结果对话框
+  Future<void> _showEditResultDialog(
+    String initialResult,
+    String llmConfigName,
+    Function(String) onResultEdited,
+  ) async {
+    final TextEditingController resultController = TextEditingController(
+      text: initialResult,
+    );
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        final dialogLocalizations = AppLocalizations.of(dialogContext);
+        final dialogNavigator = Navigator.of(dialogContext);
+
+        return AlertDialog(
+          title: Text(dialogLocalizations.translate('edit_llm_result')),
+          content: SizedBox(
+            width: MediaQuery.of(dialogContext).size.width * 0.8,
+            child: SingleChildScrollView(
+              child: TextField(
+                controller: resultController,
+                maxLines: 15,
+                decoration: InputDecoration(
+                  hintText: dialogLocalizations.translate('enter_result_here'),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(dialogLocalizations.translate('cancel')),
+              onPressed: () {
+                dialogNavigator.pop();
+              },
+            ),
+            TextButton(
               child: Text(dialogLocalizations.translate('save')),
               onPressed: () {
-                // 保存编辑后的提示词和选择的LLM配置并调用回调函数
-                // 由于DropdownButtonFormField的value属性需要在父组件中管理状态，这里我们直接使用selectedLLMConfig
-                onPromptEditedAndLLMSelected(promptController.text, selectedLLMConfig);
+                // 保存编辑后的结果并调用回调函数
+                onResultEdited(resultController.text);
                 dialogNavigator.pop();
               },
             ),
