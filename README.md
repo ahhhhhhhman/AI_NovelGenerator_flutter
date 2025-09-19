@@ -1,181 +1,114 @@
 # AI小说生成器 Flutter版
 
 一个基于Flutter开发的AI小说生成器应用程序，可以帮助用户快速生成小说内容、管理章节和角色等。
-为[https://github.com/YILING0013/AI_NovelGenerator](https://github.com/YILING0013/AI_NovelGenerator)的flutter重构。
+为[原Python版本](https://github.com/YILING0013/AI_NovelGenerator)的Flutter重构版本。
 
 ## 功能特性
 
-- 自动生成小说内容
-- 章节结构管理
-- 角色状态跟踪
-- 全文概览视图
-- 章节管理功能
-- 个性化设置
-- 多语言支持（中英文）
-- LLM大模型集成（支持OpenAI兼容接口）
-
-## 界面预览
-
-![主界面](screenshots/main_interface.png)
+- 自动生成小说内容和章节
+- 小说架构智能规划
+- 章节蓝图设计
+- 角色状态动态跟踪
+- 全文内容概览
+- 精确的章节管理
+- 个性化配置设置
+- 中英文双语支持
+- 多种LLM模型支持（DeepSeek、GPT、Gemini等）
 
 ## 技术栈
 
 - Flutter 3.x
-- Dart
+- Dart 2.17+
 - Provider 状态管理
 - Material Design 3
-- 国际化支持 (i18n)
+- i18n 国际化支持
+- WebDAV 同步支持
 
 ## 项目结构
 
 ```
 lib/
-├── main.dart                      # 应用入口文件
-├── app/                           # 应用配置
-│   ├── app.dart                   # 根组件
-│   ├── routes.dart                # 路由管理
-│   └── localizations/             # 国际化支持
-├── data/                          # 数据层
-│   ├── models/                    # 数据模型
-│   ├── repositories/              # 数据仓库
-│   └── datasources/               # 数据源
-├── domain/                        # 业务层
-│   ├── usecases/                  # 用例
-│   └── services/                  # 业务服务
-├── presentation/                  # UI层
-│   ├── pages/                     # 页面
-│   ├── widgets/                   # 通用组件
-│   └── theme/                     # 主题配置
-├── utils/                         # 工具类
-└── assets/                        # 静态资源文件
+├── main.dart                # 应用入口
+├── app/                     # 应用配置
+├── data/                    # 数据层
+├── domain/                  # 业务层
+├── presentation/           # UI层
+└── utils/                  # 工具类
 ```
 
-## 安装与运行
+## 安装使用
 
-### 环境要求
+### 方式一：直接下载使用
 
-- Flutter 3.0 或更高版本
-- Dart 2.17 或更高版本
-- Android Studio / VS Code / IntelliJ IDEA (推荐)
+1. 前往 [Releases](https://github.com/ahhhhhhhman/AI_NovelGenerator_flutter/releases) 页面
+2. 下载对应平台的安装包：
+   - Windows: 下载 `.exe` 安装包
+3. 运行安装程序或直接打开应用即可使用
 
-### 安装步骤
+### 方式二：源码安装
 
-1. 克隆项目到本地：
+#### 环境要求
+
+- Flutter 3.0+
+- Dart 2.17+
+- Android Studio / VS Code / IntelliJ IDEA
+
+#### 安装步骤
+
+1. 克隆项目：
 ```bash
 git clone https://github.com/ahhhhhhhman/AI_NovelGenerator_flutter
 ```
 
-2. 进入项目目录：
-```bash
-cd ai_novelgenerator_flutter
-```
-
-3. 获取依赖包：
+2. 安装依赖：
 ```bash
 flutter pub get
 ```
 
-4. 运行应用程序：
+3. 运行应用：
 ```bash
-# 运行在Chrome浏览器上
-flutter run -d chrome
-
-# 运行在Windows桌面端
-flutter run -d windows
-
-# 运行在Android设备上
-flutter run -d android
+flutter run -d <platform>  # platform可以是windows/chrome/android等
 ```
 
-## 使用说明
+## LLM模型配置
 
-1. **导航栏操作**：
-   - 点击左上角菜单图标可打开导航栏
-   - 在导航栏中选择不同的功能模块
-   - 当前支持7个主要功能模块：
-     - **主要功能**：应用的核心功能入口
-     - **小说架构**：构建小说的整体结构
-     - **章节蓝图**：设计具体章节的内容蓝图
-     - **角色状态**：管理小说中的角色信息
-     - **全文概述**：查看小说的完整内容概览
-     - **章节管理**：管理各个章节的内容
-     - **其他设置**：应用的其他配置选项
-
-2. **页面切换**：
-   - 应用会根据导航栏的选择自动切换到对应页面
-   - 页面标题会动态更新以反映当前所在的功能模块
-
-## LLM大模型集成
-
-本项目支持集成各种OpenAI兼容的大语言模型服务：
-
-### 配置说明
-
-在`assets/config/config.example.json`中可以找到LLM配置示例：
+支持多种大语言模型服务，在`C:\Users\{用户名}\Documents\novel_generator_flutter\config.json`中配置：
 
 ```json
-"llm_configs": {
-    "DeepSeek V3": {
-        "api_key": "",
-        "base_url": "https://api.deepseek.com/v1",
-        "model_name": "deepseek-chat",
-        "temperature": 0.7,
-        "max_tokens": 8192,
-        "timeout": 600,
-        "interface_format": "OpenAI"
-    },
-    "GPT 5": {
-        "api_key": "",
-        "base_url": "https://api.openai.com/v1",
-        "model_name": "gpt-5",
-        "temperature": 0.7,
-        "max_tokens": 32768,
-        "timeout": 600,
-        "interface_format": "OpenAI"
+{
+    "llm_configs": {
+        "DeepSeek V3": {
+            "base_url": "https://api.deepseek.com/v1",
+            "model_name": "deepseek-chat"
+        },
+        "GPT 5": {
+            "base_url": "https://api.openai.com/v1",
+            "model_name": "gpt-5"
+        },
+        "Gemini 2.5 Pro": {
+            "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+            "model_name": "gemini-2.5-pro"
+        }
     }
 }
 ```
 
-### 使用方法
+## 其他功能
 
-1. 复制`config.example.json`为`config.json`并填入你的API密钥
-2. 在应用中可以通过配置名称调用不同的LLM服务
-3. 系统支持超时重传等机制确保请求稳定性
+### WebDAV同步
+- 支持配置和数据的云端同步
+- 自动备份和恢复
+- 实时同步更新
 
-### 开发者API
-
-提供以下接口供开发者使用：
-
-- `LLMService.callLLM(prompt, configName)` - 调用指定配置的LLM
-- `LLMUseCase.generateText(prompt, configName)` - 生成文本的用例封装
-
-## 国际化支持
-
-本项目支持多语言切换，目前支持：
-- 简体中文
-- 英语
-
-语言会根据系统设置自动切换，也可以在设置中手动更改。
-
-## 开发指南
-
-### 添加新页面
-
-1. 在 `lib/presentation/pages/` 目录下创建新的页面文件
-2. 在 `lib/app/routes.dart` 中添加路由配置
-3. 在 `lib/presentation/widgets/navigation_drawer.dart` 中添加导航项
-4. 在 `lib/presentation/pages/home_page.dart` 中添加页面引用和标题
-
-### 添加新翻译
-
-1. 修改 `assets/i18n/zh.json` 文件添加中文翻译
-2. 修改 `assets/i18n/en.json` 文件添加英文翻译
-3. 在需要使用的地方通过 `AppLocalizations.of(context).translate('key')` 调用
-
-## 贡献
-
-欢迎提交Issue和Pull Request来改进这个项目。
+### 国际化
+- 支持中文和英文
+- 自动适应系统语言
+- 可手动切换语言
 
 ## 许可证
 
-本项目采用GNU Affero General Public License v3.0 (AGPL-3.0)许可证。
+GNU Affero General Public License v3.0 (AGPL-3.0)
+
+## 联系我们
+
+如有问题或建议，欢迎提交Issue或Pull Request。
